@@ -1,4 +1,5 @@
-fastapi==0.111.0
+fastapi>=0.120.0
+starlette>=0.49.1
 uvicorn[standard]==0.30.1
 pydantic>=2.7
 httpx>=0.27
@@ -22,4 +23,19 @@ pymodbus>=3.0.0
 bacpypes3>=0.0.100  # BACnet protocol library for IoT safety sensors (optional - only needed for BACnet integration)
 requests>=2.31.0
 pyserial>=3.5
-redis>=4.0.0
+redis>=5.0.0
+tiktoken
+python-multipart
+scikit-learn>=1.5.0
+pandas>=1.2.4
+xgboost>=1.6.0
+psutil>=5.9.0
+click>=8.0.0
+psycopg[binary]>=3.0.0
+anyio>=4.0.0
+# Document Processing
+Pillow>=10.3.0
+pdf2image==1.17.0
+pdfplumber==0.11.8
+# NeMo Guardrails SDK
+nemoguardrails>=0.19.0
