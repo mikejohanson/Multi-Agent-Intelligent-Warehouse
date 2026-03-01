@@ -1,0 +1,3202 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="NVIDIA Blueprint–aligned multi-agent assistant for warehouse operations. LangGraph-orchestrated AI agents with MCP framework, hybrid RAG, and GPU-accelerated forecasting." name="description"/>
+<link href="https://mikejohanson.github.io/Multi-Agent-Intelligent-Warehouse/architecture/diagrams/warehouse-operational-assistant/" rel="canonical"/>
+<link href="../../adr/003-hybrid-rag-architecture/" rel="prev"/>
+<link href="../../../agents/" rel="next"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.7" name="generator"/>
+<title>Diagrams - Multi-Agent Intelligent Warehouse</title>
+<link href="../../../assets/stylesheets/main.8608ea7d.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="light-green" data-md-color-primary="green" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#warehouse-operational-assistant-architecture-diagram">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Multi-Agent Intelligent Warehouse" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Multi-Agent Intelligent Warehouse">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Multi-Agent Intelligent Warehouse
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Diagrams
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="light-green" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="green" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="light-green" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="green" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+<div class="md-search__suggest" data-md-component="search-suggest"></div>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/mikejohanson/Multi-Agent-Intelligent-Warehouse" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
+    mikejohanson/Multi-Agent-Intelligent-Warehouse
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../..">
+        
+  
+    
+  
+  Home
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../getting-started/">
+          
+  
+  Getting Started
+
+        </a>
+</li>
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../system-overview/">
+          
+  
+  Architecture
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../agents/">
+          
+  
+  Agents
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../forecasting/">
+          
+  
+  Forecasting
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../retrieval/evidence-scoring/">
+          
+  
+  Retrieval
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../integrations/">
+          
+  
+  Integrations
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../api/">
+        
+  
+    
+  
+  API Reference
+
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../security/">
+          
+  
+  Security
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../configuration/llm-parameters/">
+          
+  
+  Configuration
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../development/">
+          
+  
+  Development
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../reference/">
+          
+  
+  Reference
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Multi-Agent Intelligent Warehouse" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Multi-Agent Intelligent Warehouse">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    Multi-Agent Intelligent Warehouse
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/mikejohanson/Multi-Agent-Intelligent-Warehouse" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</div>
+<div class="md-source__repository">
+    mikejohanson/Multi-Agent-Intelligent-Warehouse
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../..">
+<span class="md-ellipsis">
+    Home
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../getting-started/">
+<span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../getting-started/prerequisites/">
+<span class="md-ellipsis">
+    Prerequisites
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../getting-started/quick-start/">
+<span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../getting-started/environment-configuration/">
+<span class="md-ellipsis">
+    Environment Configuration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../getting-started/deployment/">
+<span class="md-ellipsis">
+    Deployment
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../getting-started/troubleshooting/">
+<span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+<span class="md-ellipsis">
+    Architecture
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../system-overview/">
+<span class="md-ellipsis">
+    System Overview
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../reasoning-engine/">
+<span class="md-ellipsis">
+    Reasoning Engine
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../database-migrations/">
+<span class="md-ellipsis">
+    Database Migrations
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../guardrails-implementation/">
+<span class="md-ellipsis">
+    Guardrails
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../changelog-automation/">
+<span class="md-ellipsis">
+    Changelog Automation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="">
+<span class="md-ellipsis">
+    MCP Framework
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_6_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_6">
+<span class="md-nav__icon md-icon"></span>
+            MCP Framework
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/">
+<span class="md-ellipsis">
+    MCP Framework
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/integration/">
+<span class="md-ellipsis">
+    Integration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/api-reference/">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/custom-implementation/">
+<span class="md-ellipsis">
+    Custom Implementation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/gpu-acceleration-guide/">
+<span class="md-ellipsis">
+    GPU Acceleration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/deployment-guide/">
+<span class="md-ellipsis">
+    Deployment Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/migration-guide/">
+<span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../mcp/rollback-strategy/">
+<span class="md-ellipsis">
+    Rollback Strategy
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_3_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="">
+<span class="md-ellipsis">
+    ADRs
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_7_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_3_7">
+<span class="md-nav__icon md-icon"></span>
+            ADRs
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../adr/001-database-migration-system/">
+<span class="md-ellipsis">
+    ADR-001: Database Migration System
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../adr/002-nvidia-nims-integration/">
+<span class="md-ellipsis">
+    ADR-002: NVIDIA NIMs Integration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../adr/003-hybrid-rag-architecture/">
+<span class="md-ellipsis">
+    ADR-003: Hybrid RAG Architecture
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Diagrams
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Diagrams
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#system-architecture-overview">
+<span class="md-ellipsis">
+      System Architecture Overview
+    </span>
+</a>
+<nav aria-label="System Architecture Overview" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#key-architectural-decisions">
+<span class="md-ellipsis">
+      Key Architectural Decisions
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-flow-architecture-with-mcp-integration">
+<span class="md-ellipsis">
+      Data Flow Architecture with MCP Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#component-status-implementation-details">
+<span class="md-ellipsis">
+      Component Status &amp; Implementation Details
+    </span>
+</a>
+<nav aria-label="Component Status &amp; Implementation Details" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fully-implemented-components">
+<span class="md-ellipsis">
+      Fully Implemented Components
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pending-components">
+<span class="md-ellipsis">
+      Pending Components
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#api-endpoints">
+<span class="md-ellipsis">
+      API Endpoints
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#infrastructure-components">
+<span class="md-ellipsis">
+      Infrastructure Components
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forecasting-system-architecture">
+<span class="md-ellipsis">
+      Forecasting System Architecture
+    </span>
+</a>
+<nav aria-label="Forecasting System Architecture" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forecasting-models">
+<span class="md-ellipsis">
+      Forecasting Models
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#model-availability-by-phase">
+<span class="md-ellipsis">
+      Model Availability by Phase
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#training-pipeline">
+<span class="md-ellipsis">
+      Training Pipeline
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#key-features">
+<span class="md-ellipsis">
+      Key Features
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#nvidia-nims-overview">
+<span class="md-ellipsis">
+      NVIDIA NIMs Overview
+    </span>
+</a>
+<nav aria-label="NVIDIA NIMs Overview" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#nvidia-nims-used-in-the-system">
+<span class="md-ellipsis">
+      NVIDIA NIMs Used in the System
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#nim-deployment-options">
+<span class="md-ellipsis">
+      NIM Deployment Options
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#installation-requirements">
+<span class="md-ellipsis">
+      Installation Requirements
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#endpoint-configuration-guide">
+<span class="md-ellipsis">
+      Endpoint Configuration Guide
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#document-processing-pipeline-6-stage-nvidia-nemo">
+<span class="md-ellipsis">
+      Document Processing Pipeline (6-Stage NVIDIA NeMo)
+    </span>
+</a>
+<nav aria-label="Document Processing Pipeline (6-Stage NVIDIA NeMo)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-1-document-preprocessing">
+<span class="md-ellipsis">
+      Stage 1: Document Preprocessing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-2-intelligent-ocr">
+<span class="md-ellipsis">
+      Stage 2: Intelligent OCR
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-3-small-llm-processing">
+<span class="md-ellipsis">
+      Stage 3: Small LLM Processing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-4-embedding-indexing">
+<span class="md-ellipsis">
+      Stage 4: Embedding &amp; Indexing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-5-large-llm-judge">
+<span class="md-ellipsis">
+      Stage 5: Large LLM Judge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-6-intelligent-routing">
+<span class="md-ellipsis">
+      Stage 6: Intelligent Routing
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deployment-specific-configurations">
+<span class="md-ellipsis">
+      Deployment-Specific Configurations
+    </span>
+</a>
+<nav aria-label="Deployment-Specific Configurations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#postgresqltimescaledb-versions-by-deployment">
+<span class="md-ellipsis">
+      PostgreSQL/TimescaleDB Versions by Deployment
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#component-implementation-references">
+<span class="md-ellipsis">
+      Component Implementation References
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#version-history">
+<span class="md-ellipsis">
+      Version History
+    </span>
+</a>
+<nav aria-label="Version History" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2025-01-xx-architecture-documentation-update">
+<span class="md-ellipsis">
+      2025-01-XX - Architecture Documentation Update
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#previous-versions">
+<span class="md-ellipsis">
+      Previous Versions
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#system-capabilities">
+<span class="md-ellipsis">
+      System Capabilities
+    </span>
+</a>
+<nav aria-label="System Capabilities" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fully-operational-features">
+<span class="md-ellipsis">
+      Fully Operational Features
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#planned-features">
+<span class="md-ellipsis">
+      Planned Features
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#technology-stack">
+<span class="md-ellipsis">
+      Technology Stack
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Agents
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_4_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+            Agents
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../agents/">
+<span class="md-ellipsis">
+    Agents
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../agents/equipment-agent/">
+<span class="md-ellipsis">
+    Equipment &amp; Assets
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../agents/operations-agent/">
+<span class="md-ellipsis">
+    Operations
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../agents/safety-agent/">
+<span class="md-ellipsis">
+    Safety &amp; Compliance
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../agents/forecasting-agent/">
+<span class="md-ellipsis">
+    Forecasting
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../agents/document-agent/">
+<span class="md-ellipsis">
+    Document Processing
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+<span class="md-ellipsis">
+    Forecasting
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_5_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+            Forecasting
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../forecasting/">
+<span class="md-ellipsis">
+    NVIDIA RAPIDS Demand Forecasting Agent
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../forecasting/rapids-setup/">
+<span class="md-ellipsis">
+    RAPIDS Setup
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../forecasting/rapids-implementation-plan/">
+<span class="md-ellipsis">
+    Implementation Plan
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../forecasting/phase1-phase2-complete/">
+<span class="md-ellipsis">
+    Phase 1 &amp; 2
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../forecasting/phase3-4-5-complete/">
+<span class="md-ellipsis">
+    Phase 3-5
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../forecasting/reorder-recommendation-explainer/">
+<span class="md-ellipsis">
+    Reorder Recommendations
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+<span class="md-ellipsis">
+    Retrieval
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_6_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+            Retrieval
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../retrieval/evidence-scoring/">
+<span class="md-ellipsis">
+    Evidence Scoring
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../retrieval/sql-path-optimization/">
+<span class="md-ellipsis">
+    SQL Optimization
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../retrieval/caching/">
+<span class="md-ellipsis">
+    Caching
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_7" type="checkbox"/>
+<label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+<span class="md-ellipsis">
+    Integrations
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_7">
+<span class="md-nav__icon md-icon"></span>
+            Integrations
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../integrations/">
+<span class="md-ellipsis">
+    Integrations
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../integrations/wms-integration/">
+<span class="md-ellipsis">
+    WMS Integration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../integrations/iot-integration/">
+<span class="md-ellipsis">
+    IoT Integration
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../api/">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_9" type="checkbox"/>
+<label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+<span class="md-ellipsis">
+    Security
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_9_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_9">
+<span class="md-nav__icon md-icon"></span>
+            Security
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/">
+<span class="md-ellipsis">
+    Security
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/secrets/">
+<span class="md-ellipsis">
+    Secrets Management
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/vulnerability-mitigations/">
+<span class="md-ellipsis">
+    Vulnerability Mitigations
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/axios-ssrf-protection/">
+<span class="md-ellipsis">
+    Axios SSRF Protection
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/langchain-path-traversal/">
+<span class="md-ellipsis">
+    LangChain Path Traversal
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/python-repl-security/">
+<span class="md-ellipsis">
+    Python REPL Security
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/nspect-cve-2025-64439-mitigation/">
+<span class="md-ellipsis">
+    CVE-2025-64439 Mitigation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/security-scan-response-aiohttp/">
+<span class="md-ellipsis">
+    Scan Response - aiohttp
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/security-scan-response-pyjwt/">
+<span class="md-ellipsis">
+    Scan Response - PyJWT
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/security-scan-response-react-server-components/">
+<span class="md-ellipsis">
+    Scan Response - React Server Components
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../security/vulnerability-research-cve-2025-8709-cve-2025-68664/">
+<span class="md-ellipsis">
+    Vulnerability Research
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_10" type="checkbox"/>
+<label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+<span class="md-ellipsis">
+    Configuration
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_10_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_10">
+<span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../configuration/llm-parameters/">
+<span class="md-ellipsis">
+    LLM Parameters
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../configuration/dependabot/">
+<span class="md-ellipsis">
+    Dependabot
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_11" type="checkbox"/>
+<label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+<span class="md-ellipsis">
+    Development
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_11_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_11">
+<span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../development/">
+<span class="md-ellipsis">
+    Development
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../development/contributing/">
+<span class="md-ellipsis">
+    Contributing
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../development/notebook-testing-guide/">
+<span class="md-ellipsis">
+    Notebook Testing Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../development/repository-health-report/">
+<span class="md-ellipsis">
+    Repository Health Report
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../development/software-inventory/">
+<span class="md-ellipsis">
+    Software Inventory
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle md-toggle--indeterminate" id="__nav_12" type="checkbox"/>
+<label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+<span class="md-ellipsis">
+    Reference
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_12_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_12">
+<span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../reference/">
+<span class="md-ellipsis">
+    Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../reference/phase2-performance-plan/">
+<span class="md-ellipsis">
+    Phase 2 Performance Plan
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../reference/phase2-implementation-status/">
+<span class="md-ellipsis">
+    Phase 2 Implementation Status
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#system-architecture-overview">
+<span class="md-ellipsis">
+      System Architecture Overview
+    </span>
+</a>
+<nav aria-label="System Architecture Overview" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#key-architectural-decisions">
+<span class="md-ellipsis">
+      Key Architectural Decisions
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#data-flow-architecture-with-mcp-integration">
+<span class="md-ellipsis">
+      Data Flow Architecture with MCP Integration
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#component-status-implementation-details">
+<span class="md-ellipsis">
+      Component Status &amp; Implementation Details
+    </span>
+</a>
+<nav aria-label="Component Status &amp; Implementation Details" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fully-implemented-components">
+<span class="md-ellipsis">
+      Fully Implemented Components
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pending-components">
+<span class="md-ellipsis">
+      Pending Components
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#api-endpoints">
+<span class="md-ellipsis">
+      API Endpoints
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#infrastructure-components">
+<span class="md-ellipsis">
+      Infrastructure Components
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forecasting-system-architecture">
+<span class="md-ellipsis">
+      Forecasting System Architecture
+    </span>
+</a>
+<nav aria-label="Forecasting System Architecture" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#forecasting-models">
+<span class="md-ellipsis">
+      Forecasting Models
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#model-availability-by-phase">
+<span class="md-ellipsis">
+      Model Availability by Phase
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#training-pipeline">
+<span class="md-ellipsis">
+      Training Pipeline
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#key-features">
+<span class="md-ellipsis">
+      Key Features
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#nvidia-nims-overview">
+<span class="md-ellipsis">
+      NVIDIA NIMs Overview
+    </span>
+</a>
+<nav aria-label="NVIDIA NIMs Overview" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#nvidia-nims-used-in-the-system">
+<span class="md-ellipsis">
+      NVIDIA NIMs Used in the System
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#nim-deployment-options">
+<span class="md-ellipsis">
+      NIM Deployment Options
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#installation-requirements">
+<span class="md-ellipsis">
+      Installation Requirements
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#endpoint-configuration-guide">
+<span class="md-ellipsis">
+      Endpoint Configuration Guide
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#document-processing-pipeline-6-stage-nvidia-nemo">
+<span class="md-ellipsis">
+      Document Processing Pipeline (6-Stage NVIDIA NeMo)
+    </span>
+</a>
+<nav aria-label="Document Processing Pipeline (6-Stage NVIDIA NeMo)" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-1-document-preprocessing">
+<span class="md-ellipsis">
+      Stage 1: Document Preprocessing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-2-intelligent-ocr">
+<span class="md-ellipsis">
+      Stage 2: Intelligent OCR
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-3-small-llm-processing">
+<span class="md-ellipsis">
+      Stage 3: Small LLM Processing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-4-embedding-indexing">
+<span class="md-ellipsis">
+      Stage 4: Embedding &amp; Indexing
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-5-large-llm-judge">
+<span class="md-ellipsis">
+      Stage 5: Large LLM Judge
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#stage-6-intelligent-routing">
+<span class="md-ellipsis">
+      Stage 6: Intelligent Routing
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deployment-specific-configurations">
+<span class="md-ellipsis">
+      Deployment-Specific Configurations
+    </span>
+</a>
+<nav aria-label="Deployment-Specific Configurations" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#postgresqltimescaledb-versions-by-deployment">
+<span class="md-ellipsis">
+      PostgreSQL/TimescaleDB Versions by Deployment
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#component-implementation-references">
+<span class="md-ellipsis">
+      Component Implementation References
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#version-history">
+<span class="md-ellipsis">
+      Version History
+    </span>
+</a>
+<nav aria-label="Version History" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#2025-01-xx-architecture-documentation-update">
+<span class="md-ellipsis">
+      2025-01-XX - Architecture Documentation Update
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#previous-versions">
+<span class="md-ellipsis">
+      Previous Versions
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#system-capabilities">
+<span class="md-ellipsis">
+      System Capabilities
+    </span>
+</a>
+<nav aria-label="System Capabilities" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#fully-operational-features">
+<span class="md-ellipsis">
+      Fully Operational Features
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#planned-features">
+<span class="md-ellipsis">
+      Planned Features
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#technology-stack">
+<span class="md-ellipsis">
+      Technology Stack
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="warehouse-operational-assistant-architecture-diagram">Warehouse Operational Assistant - Architecture Diagram<a class="headerlink" href="#warehouse-operational-assistant-architecture-diagram" title="Permanent link">¶</a></h1>
+<h2 id="system-architecture-overview">System Architecture Overview<a class="headerlink" href="#system-architecture-overview" title="Permanent link">¶</a></h2>
+<p>The Warehouse Operational Assistant is a production-grade multi-agent AI system built on NVIDIA AI Blueprints, featuring:</p>
+<ul>
+<li><strong>Multi-Agent Orchestration</strong>: LangGraph-based planner/router with specialized agents (Equipment, Operations, Safety, Forecasting, Document)</li>
+<li><strong>NVIDIA NIM Integration</strong>: Cloud or self-hosted NIM endpoints for LLM, embeddings, and document processing</li>
+<li><strong>MCP Framework</strong>: Model Context Protocol with dynamic tool discovery and execution</li>
+<li><strong>Hybrid RAG</strong>: PostgreSQL/TimescaleDB + Milvus vector database with intelligent query routing</li>
+<li><strong>GPU Acceleration</strong>: NVIDIA cuVS for vector search, RAPIDS for forecasting</li>
+<li><strong>Production-Ready</strong>: Complete monitoring, security, and deployment infrastructure</li>
+</ul>
+<h3 id="key-architectural-decisions">Key Architectural Decisions<a class="headerlink" href="#key-architectural-decisions" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>NVIDIA NIMs</strong>: All AI services use NVIDIA NIMs, which can be deployed as cloud endpoints or self-hosted instances</li>
+<li><strong>Hybrid Retrieval</strong>: Combines structured SQL queries with semantic vector search for optimal accuracy</li>
+<li><strong>MCP Integration</strong>: Dynamic tool discovery and execution for flexible external system integration</li>
+<li><strong>Multi-Agent System</strong>: Specialized agents for different operational domains with centralized planning</li>
+<li><strong>GPU Acceleration</strong>: Optional but recommended for production-scale performance</li>
+</ol>
+<pre class="mermaid"><code>graph TB
+    subgraph UI_LAYER["User Interface Layer"]
+        UI["React Web App&lt;br/&gt;Port 3001 (0.0.0.0)&lt;br/&gt;Node.js 20+&lt;br/&gt;CRACO + Webpack&lt;br/&gt;Production Ready"]
+        Mobile["React Native Mobile&lt;br/&gt;Pending"]
+        API_GW["FastAPI Gateway&lt;br/&gt;Port 8001&lt;br/&gt;All Endpoints Working"]
+    end
+
+    subgraph SEC_LAYER["Security Layer"]
+        Auth["JWT Authentication&lt;br/&gt;Implemented"]
+        RBAC["Role-Based Access Control&lt;br/&gt;5 User Roles"]
+        Guardrails["NeMo Guardrails&lt;br/&gt;Content Safety"]
+    end
+
+    subgraph MCP_LAYER["MCP Integration Layer - Complete"]
+        MCP_SERVER["MCP Server&lt;br/&gt;Tool Registration Discovery&lt;br/&gt;Complete"]
+        MCP_CLIENT["MCP Client&lt;br/&gt;Multi-Server Communication&lt;br/&gt;Complete"]
+        TOOL_DISCOVERY["Tool Discovery Service&lt;br/&gt;Dynamic Tool Registration&lt;br/&gt;Complete"]
+        TOOL_BINDING["Tool Binding Service&lt;br/&gt;Intelligent Tool Execution&lt;br/&gt;Complete"]
+        TOOL_ROUTING["Tool Routing Service&lt;br/&gt;Advanced Routing Logic&lt;br/&gt;Complete"]
+        TOOL_VALIDATION["Tool Validation Service&lt;br/&gt;Error Handling Validation&lt;br/&gt;Complete"]
+        SERVICE_DISCOVERY["Service Discovery Registry&lt;br/&gt;Centralized Service Management&lt;br/&gt;Complete"]
+        MCP_MONITORING["MCP Monitoring Service&lt;br/&gt;Metrics Health Monitoring&lt;br/&gt;Complete"]
+        ROLLBACK_MGR["Rollback Manager&lt;br/&gt;Fallback Recovery&lt;br/&gt;Complete"]
+    end
+
+    subgraph AGENT_LAYER["Agent Orchestration - LangGraph + MCP"]
+        Planner["MCP Planner Graph&lt;br/&gt;MCP-Enhanced Intent Classification&lt;br/&gt;Fully Integrated"]
+        Equipment["MCP Equipment Agent&lt;br/&gt;Dynamic Tool Discovery&lt;br/&gt;Fully Integrated"]
+        Operations["MCP Operations Agent&lt;br/&gt;Dynamic Tool Discovery&lt;br/&gt;Fully Integrated"]
+        Safety["MCP Safety Agent&lt;br/&gt;Dynamic Tool Discovery&lt;br/&gt;Fully Integrated"]
+        Forecasting["MCP Forecasting Agent&lt;br/&gt;Demand Forecasting &amp; Analytics&lt;br/&gt;Production Ready"]
+        Document["Document Extraction Agent&lt;br/&gt;6-Stage NVIDIA NeMo Pipeline&lt;br/&gt;Production Ready"]
+        Chat["MCP General Agent&lt;br/&gt;Tool Discovery Execution&lt;br/&gt;Fully Integrated"]
+    end
+
+    subgraph MEM_LAYER["Memory Management"]
+        Memory["Memory Manager&lt;br/&gt;Session Context"]
+        Profiles["User Profiles&lt;br/&gt;PostgreSQL"]
+        Sessions["Session Context&lt;br/&gt;PostgreSQL"]
+        History["Conversation History&lt;br/&gt;PostgreSQL"]
+        Redis_Cache["Redis Cache&lt;br/&gt;Session Caching"]
+    end
+
+    subgraph AI_LAYER["AI Services - NVIDIA NIMs"]
+        NIM_LLM["NVIDIA NIM LLM&lt;br/&gt;Llama 3.3 Nemotron Super 49B&lt;br/&gt;Fully Integrated"]
+        NIM_EMB["NVIDIA NIM Embeddings&lt;br/&gt;llama-3_2-nv-embedqa-1b-v2&lt;br/&gt;GPU Accelerated"]
+        GUARDRAILS_NIM["NeMo Guardrails&lt;br/&gt;Content Safety &amp; Compliance"]
+    end
+
+    subgraph DOC_LAYER["Document Processing Pipeline - NVIDIA NeMo"]
+        NEMO_RETRIEVER["NeMo Retriever&lt;br/&gt;Document Preprocessing&lt;br/&gt;Stage 1"]
+        NEMO_OCR["NeMoRetriever-OCR-v1&lt;br/&gt;Intelligent OCR&lt;br/&gt;Stage 2"]
+        NANO_VL["nemotron-nano-12b-v2-vl&lt;br/&gt;Small LLM Processing&lt;br/&gt;Stage 3"]
+        E5_EMBEDDINGS["llama-3_2-nv-embedqa-1b-v2&lt;br/&gt;Embedding Indexing&lt;br/&gt;Stage 4"]
+        NEMOTRON_70B["Llama 3.3 Nemotron Super 49B&lt;br/&gt;Large LLM Judge&lt;br/&gt;Stage 5"]
+        INTELLIGENT_ROUTER["Intelligent Router&lt;br/&gt;Quality-based Routing&lt;br/&gt;Stage 6"]
+    end
+
+    subgraph FORECAST_LAYER["Forecasting System - Production Ready"]
+        FORECAST_SERVICE["Forecasting Service&lt;br/&gt;Multi-Model Ensemble"]
+        FORECAST_MODELS["ML Models&lt;br/&gt;XGBoost, Random Forest&lt;br/&gt;Gradient Boosting, Ridge, SVR"]
+        FORECAST_TRAINING["Training Pipeline&lt;br/&gt;Phase 1-3 + RAPIDS GPU"]
+        FORECAST_ANALYTICS["Business Intelligence&lt;br/&gt;Performance Monitoring"]
+        REORDER_ENGINE["Reorder Recommendations&lt;br/&gt;Automated Stock Orders"]
+    end
+
+    subgraph RAG_LAYER["Hybrid Retrieval - RAG"]
+        SQL["Structured Retriever&lt;br/&gt;PostgreSQL TimescaleDB&lt;br/&gt;90%+ Routing Accuracy"]
+        Vector["Vector Retriever&lt;br/&gt;Milvus Semantic Search&lt;br/&gt;GPU Accelerated cuVS"]
+        Hybrid["Hybrid Ranker&lt;br/&gt;Context Synthesis&lt;br/&gt;Evidence Scoring"]
+    end
+
+    subgraph CORE_SVC["Core Services"]
+        WMS_SVC["WMS Integration Service&lt;br/&gt;SAP EWM Manhattan Oracle"]
+        IoT_SVC["IoT Integration Service&lt;br/&gt;Equipment Environmental"]
+        Metrics["Prometheus Metrics&lt;br/&gt;Performance Monitoring"]
+    end
+
+    subgraph CHAT_SVC["Chat Enhancement Services - Production Ready"]
+        PARAM_VALIDATOR["Parameter Validation Service&lt;br/&gt;MCPParameterValidator&lt;br/&gt;MCP Tool Parameter Validation&lt;br/&gt;Implemented"]
+        RESPONSE_FORMATTER["Response Formatting Engine&lt;br/&gt;ResponseEnhancer&lt;br/&gt;Clean User-Friendly Responses&lt;br/&gt;Implemented"]
+        CONVERSATION_MEMORY["Conversation Memory Service&lt;br/&gt;ConversationMemoryService&lt;br/&gt;Persistent Context Management&lt;br/&gt;Implemented"]
+        EVIDENCE_COLLECTOR["Evidence Collection Service&lt;br/&gt;EvidenceCollector&lt;br/&gt;Context Source Attribution&lt;br/&gt;Implemented"]
+        QUICK_ACTIONS["Smart Quick Actions Service&lt;br/&gt;SmartQuickActions&lt;br/&gt;Contextual Action Suggestions&lt;br/&gt;Implemented"]
+        RESPONSE_VALIDATOR["Response Validation Service&lt;br/&gt;ResponseValidator&lt;br/&gt;Quality Assurance Enhancement&lt;br/&gt;Implemented"]
+        MCP_TESTING["Enhanced MCP Testing Dashboard&lt;br/&gt;Advanced Testing Interface&lt;br/&gt;Implemented"]
+    end
+
+    subgraph STORAGE["Data Storage"]
+        Postgres[("PostgreSQL TimescaleDB&lt;br/&gt;Structured Data Time Series&lt;br/&gt;Port 5435")]
+        Milvus[("Milvus GPU&lt;br/&gt;Vector Database&lt;br/&gt;NVIDIA cuVS Accelerated&lt;br/&gt;Port 19530")]
+        Redis[("Redis&lt;br/&gt;Cache Sessions&lt;br/&gt;Port 6379")]
+        MinIO[("MinIO&lt;br/&gt;Object Storage&lt;br/&gt;Port 9000")]
+    end
+
+    subgraph ADAPTERS["MCP Adapters - Complete"]
+        ERP_ADAPTER["ERP Adapter&lt;br/&gt;SAP ECC Oracle&lt;br/&gt;10+ Tools&lt;br/&gt;Complete"]
+        WMS_ADAPTER["WMS Adapter&lt;br/&gt;SAP EWM Manhattan Oracle&lt;br/&gt;15+ Tools&lt;br/&gt;Complete"]
+        IoT_ADAPTER["IoT Adapter&lt;br/&gt;Equipment Environmental Safety&lt;br/&gt;12+ Tools&lt;br/&gt;Complete"]
+        RFID_ADAPTER["RFID Barcode Adapter&lt;br/&gt;Zebra Honeywell Generic&lt;br/&gt;10+ Tools&lt;br/&gt;Complete"]
+        ATTENDANCE_ADAPTER["Time Attendance Adapter&lt;br/&gt;Biometric Card Mobile&lt;br/&gt;8+ Tools&lt;br/&gt;Complete"]
+        FORECAST_ADAPTER["Forecasting Adapter&lt;br/&gt;Demand Forecasting Tools&lt;br/&gt;6+ Tools&lt;br/&gt;Complete"]
+    end
+
+    subgraph INFRA["Infrastructure"]
+        Kafka["Apache Kafka&lt;br/&gt;Event Streaming&lt;br/&gt;Port 9092"]
+        Etcd["etcd&lt;br/&gt;Configuration Management&lt;br/&gt;Port 2379"]
+        Docker["Docker Compose&lt;br/&gt;Container Orchestration"]
+    end
+
+    subgraph MONITORING["Monitoring and Observability"]
+        Prometheus["Prometheus&lt;br/&gt;Metrics Collection&lt;br/&gt;Port 9090"]
+        Grafana["Grafana&lt;br/&gt;Dashboards Visualization&lt;br/&gt;Port 3000"]
+        AlertManager["AlertManager&lt;br/&gt;Alert Management&lt;br/&gt;Port 9093"]
+        NodeExporter["Node Exporter&lt;br/&gt;System Metrics"]
+        Cadvisor["cAdvisor&lt;br/&gt;Container Metrics"]
+    end
+
+    subgraph API_LAYER["API Endpoints"]
+        CHAT_API["/api/v1/chat&lt;br/&gt;AI-Powered Chat"]
+        EQUIPMENT_API["/api/v1/equipment&lt;br/&gt;Equipment Asset Management"]
+        INVENTORY_API["/api/v1/inventory&lt;br/&gt;Inventory Management"]
+        OPERATIONS_API["/api/v1/operations&lt;br/&gt;Workforce Tasks"]
+        SAFETY_API["/api/v1/safety&lt;br/&gt;Incidents Policies"]
+        FORECAST_API["/api/v1/forecasting&lt;br/&gt;Demand Forecasting"]
+        TRAINING_API["/api/v1/training&lt;br/&gt;Model Training"]
+        WMS_API["/api/v1/wms&lt;br/&gt;External WMS Integration"]
+        ERP_API["/api/v1/erp&lt;br/&gt;ERP Integration"]
+        IOT_API["/api/v1/iot&lt;br/&gt;IoT Sensor Data"]
+        SCANNING_API["/api/v1/scanning&lt;br/&gt;RFID Barcode Scanning"]
+        ATTENDANCE_API["/api/v1/attendance&lt;br/&gt;Time Attendance"]
+        REASONING_API["/api/v1/reasoning&lt;br/&gt;AI Reasoning"]
+        AUTH_API["/api/v1/auth&lt;br/&gt;Authentication"]
+        HEALTH_API["/api/v1/health&lt;br/&gt;System Health"]
+        MCP_API["/api/v1/mcp&lt;br/&gt;MCP Tool Management &amp; Testing"]
+        DOCUMENT_API["/api/v1/document&lt;br/&gt;Document Processing Pipeline"]
+        MIGRATION_API["/api/v1/migrations&lt;br/&gt;Database Migrations"]
+    end
+
+    UI --&gt; API_GW
+    Mobile -.-&gt; API_GW
+    API_GW --&gt; AUTH_API
+    API_GW --&gt; CHAT_API
+    API_GW --&gt; EQUIPMENT_API
+    API_GW --&gt; INVENTORY_API
+    API_GW --&gt; OPERATIONS_API
+    API_GW --&gt; SAFETY_API
+    API_GW --&gt; FORECAST_API
+    API_GW --&gt; TRAINING_API
+    API_GW --&gt; WMS_API
+    API_GW --&gt; ERP_API
+    API_GW --&gt; IOT_API
+    API_GW --&gt; SCANNING_API
+    API_GW --&gt; ATTENDANCE_API
+    API_GW --&gt; REASONING_API
+    API_GW --&gt; HEALTH_API
+    API_GW --&gt; MCP_API
+    API_GW --&gt; DOCUMENT_API
+    API_GW --&gt; MIGRATION_API
+
+    AUTH_API --&gt; Auth
+    Auth --&gt; RBAC
+    RBAC --&gt; Guardrails
+    Guardrails --&gt; Planner
+
+    MCP_API --&gt; MCP_SERVER
+    MCP_SERVER --&gt; TOOL_DISCOVERY
+    MCP_SERVER --&gt; TOOL_BINDING
+    MCP_SERVER --&gt; TOOL_ROUTING
+    MCP_SERVER --&gt; TOOL_VALIDATION
+    MCP_SERVER --&gt; SERVICE_DISCOVERY
+    MCP_SERVER --&gt; MCP_MONITORING
+    MCP_SERVER --&gt; ROLLBACK_MGR
+
+    MCP_CLIENT --&gt; MCP_SERVER
+    MCP_CLIENT --&gt; ERP_ADAPTER
+    MCP_CLIENT --&gt; WMS_ADAPTER
+    MCP_CLIENT --&gt; IoT_ADAPTER
+    MCP_CLIENT --&gt; RFID_ADAPTER
+    MCP_CLIENT --&gt; ATTENDANCE_ADAPTER
+    MCP_CLIENT --&gt; FORECAST_ADAPTER
+
+    Planner --&gt; Equipment
+    Planner --&gt; Operations
+    Planner --&gt; Safety
+    Planner --&gt; Forecasting
+    Planner --&gt; Document
+    Planner --&gt; Chat
+
+    Equipment --&gt; MCP_CLIENT
+    Operations --&gt; MCP_CLIENT
+    Safety --&gt; MCP_CLIENT
+    Forecasting --&gt; MCP_CLIENT
+    Equipment --&gt; TOOL_DISCOVERY
+    Operations --&gt; TOOL_DISCOVERY
+    Safety --&gt; TOOL_DISCOVERY
+    Forecasting --&gt; TOOL_DISCOVERY
+
+    Equipment --&gt; Memory
+    Operations --&gt; Memory
+    Safety --&gt; Memory
+    Forecasting --&gt; Memory
+    Chat --&gt; Memory
+    Document --&gt; Memory
+    Memory --&gt; Profiles
+    Memory --&gt; Sessions
+    Memory --&gt; History
+    Memory --&gt; Redis_Cache
+
+    Document --&gt; NEMO_RETRIEVER
+    NEMO_RETRIEVER --&gt; NEMO_OCR
+    NEMO_OCR --&gt; NANO_VL
+    NANO_VL --&gt; E5_EMBEDDINGS
+    E5_EMBEDDINGS --&gt; NEMOTRON_70B
+    NEMOTRON_70B --&gt; INTELLIGENT_ROUTER
+    INTELLIGENT_ROUTER --&gt; Document
+
+    FORECAST_API --&gt; FORECAST_SERVICE
+    TRAINING_API --&gt; FORECAST_TRAINING
+    FORECAST_SERVICE --&gt; FORECAST_MODELS
+    FORECAST_SERVICE --&gt; FORECAST_ANALYTICS
+    FORECAST_SERVICE --&gt; REORDER_ENGINE
+    FORECAST_TRAINING --&gt; Postgres
+    FORECAST_ANALYTICS --&gt; Postgres
+    REORDER_ENGINE --&gt; Postgres
+
+    Equipment --&gt; SQL
+    Operations --&gt; SQL
+    Safety --&gt; SQL
+    Forecasting --&gt; SQL
+    Chat --&gt; SQL
+    Document --&gt; SQL
+    Equipment --&gt; Vector
+    Operations --&gt; Vector
+    Safety --&gt; Vector
+    Forecasting --&gt; Vector
+    Chat --&gt; Vector
+    Document --&gt; Vector
+    SQL --&gt; Postgres
+    Vector --&gt; Milvus
+    SQL --&gt; Hybrid
+    Vector --&gt; Hybrid
+    NIM_EMB --&gt; Vector
+    Hybrid --&gt; NIM_LLM
+
+    Chat --&gt; PARAM_VALIDATOR
+    Chat --&gt; RESPONSE_FORMATTER
+    Chat --&gt; CONVERSATION_MEMORY
+    Chat --&gt; EVIDENCE_COLLECTOR
+    Chat --&gt; QUICK_ACTIONS
+    Chat --&gt; RESPONSE_VALIDATOR
+    MCP_API --&gt; MCP_TESTING
+    PARAM_VALIDATOR --&gt; MCP_CLIENT
+    RESPONSE_FORMATTER --&gt; Chat
+    CONVERSATION_MEMORY --&gt; Memory
+    EVIDENCE_COLLECTOR --&gt; Hybrid
+    QUICK_ACTIONS --&gt; NIM_LLM
+    RESPONSE_VALIDATOR --&gt; RESPONSE_FORMATTER
+
+    WMS_SVC --&gt; WMS_ADAPTER
+    IoT_SVC --&gt; IoT_ADAPTER
+    Metrics --&gt; Prometheus
+
+    Memory --&gt; Postgres
+    Memory --&gt; Redis
+    WMS_SVC --&gt; MinIO
+    IoT_SVC --&gt; MinIO
+
+    ERP_ADAPTER --&gt; ERP_API
+    WMS_ADAPTER --&gt; WMS_API
+    IoT_ADAPTER --&gt; IOT_API
+    RFID_ADAPTER --&gt; SCANNING_API
+    ATTENDANCE_ADAPTER --&gt; ATTENDANCE_API
+    FORECAST_ADAPTER --&gt; FORECAST_API
+
+    Document --&gt; DOCUMENT_API
+    DOCUMENT_API --&gt; NEMO_RETRIEVER
+    DOCUMENT_API --&gt; NEMO_OCR
+    DOCUMENT_API --&gt; NANO_VL
+    DOCUMENT_API --&gt; E5_EMBEDDINGS
+    DOCUMENT_API --&gt; NEMOTRON_70B
+    DOCUMENT_API --&gt; INTELLIGENT_ROUTER
+
+    MCP_TESTING --&gt; MCP_API
+    MCP_API --&gt; MCP_SERVER
+    MCP_API --&gt; TOOL_DISCOVERY
+    MCP_API --&gt; TOOL_BINDING
+
+    ERP_ADAPTER --&gt; Kafka
+    WMS_ADAPTER --&gt; Kafka
+    IoT_ADAPTER --&gt; Kafka
+    RFID_ADAPTER --&gt; Kafka
+    ATTENDANCE_ADAPTER --&gt; Kafka
+    FORECAST_ADAPTER --&gt; Kafka
+    Kafka --&gt; Postgres
+    Kafka --&gt; Milvus
+
+    Postgres --&gt; Prometheus
+    Milvus --&gt; Prometheus
+    Redis --&gt; Prometheus
+    API_GW --&gt; Prometheus
+    MCP_MONITORING --&gt; Prometheus
+    Prometheus --&gt; Grafana
+    Prometheus --&gt; AlertManager
+    NodeExporter --&gt; Prometheus
+    Cadvisor --&gt; Prometheus
+
+    classDef userLayer fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef securityLayer fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef mcpLayer fill:#e8f5e8,stroke:#00D4AA,stroke-width:3px
+    classDef agentLayer fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef memoryLayer fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef aiLayer fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef forecastLayer fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px
+    classDef dataLayer fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef serviceLayer fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    classDef storageLayer fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef adapterLayer fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef infraLayer fill:#fafafa,stroke:#424242,stroke-width:2px
+    classDef monitorLayer fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    classDef apiLayer fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+
+    class UI,Mobile,API_GW userLayer
+    class Auth,RBAC,Guardrails securityLayer
+    class MCP_SERVER,MCP_CLIENT,TOOL_DISCOVERY,TOOL_BINDING,TOOL_ROUTING,TOOL_VALIDATION,SERVICE_DISCOVERY,MCP_MONITORING,ROLLBACK_MGR mcpLayer
+    class Planner,Equipment,Operations,Safety,Forecasting,Document,Chat agentLayer
+    class Memory,Profiles,Sessions,History,Redis_Cache memoryLayer
+    class NIM_LLM,NIM_EMB aiLayer
+    class NEMO_RETRIEVER,NEMO_OCR,NANO_VL,E5_EMBEDDINGS,NEMOTRON_70B,INTELLIGENT_ROUTER aiLayer
+    class FORECAST_SERVICE,FORECAST_MODELS,FORECAST_TRAINING,FORECAST_ANALYTICS,REORDER_ENGINE forecastLayer
+    class SQL,Vector,Hybrid dataLayer
+    class WMS_SVC,IoT_SVC,Metrics serviceLayer
+    class PARAM_VALIDATOR,RESPONSE_FORMATTER,CONVERSATION_MEMORY,EVIDENCE_COLLECTOR,QUICK_ACTIONS,RESPONSE_VALIDATOR,MCP_TESTING serviceLayer
+    class Postgres,Milvus,Redis,MinIO storageLayer
+    class ERP_ADAPTER,WMS_ADAPTER,IoT_ADAPTER,RFID_ADAPTER,ATTENDANCE_ADAPTER,FORECAST_ADAPTER adapterLayer
+    class Kafka,Etcd,Docker infraLayer
+    class Prometheus,Grafana,AlertManager,NodeExporter,Cadvisor monitorLayer
+    class CHAT_API,EQUIPMENT_API,INVENTORY_API,OPERATIONS_API,SAFETY_API,FORECAST_API,TRAINING_API,WMS_API,ERP_API,IOT_API,SCANNING_API,ATTENDANCE_API,REASONING_API,AUTH_API,HEALTH_API,MCP_API,DOCUMENT_API,MIGRATION_API apiLayer</code></pre>
+<h2 id="data-flow-architecture-with-mcp-integration">Data Flow Architecture with MCP Integration<a class="headerlink" href="#data-flow-architecture-with-mcp-integration" title="Permanent link">¶</a></h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant User
+    participant UI as React Web App
+    participant API as FastAPI Gateway
+    participant Auth as JWT Auth
+    participant Guardrails as NeMo Guardrails
+    participant Planner as Planner Agent
+    participant Agent as MCP-Enabled Agent
+    participant MCP as MCP Client
+    participant MCP_SRV as MCP Server
+    participant Memory as Memory Manager
+    participant Retriever as Hybrid Retriever
+    participant NIM as NVIDIA NIMs
+    participant Postgres as PostgreSQL/TimescaleDB
+    participant Milvus as Milvus Vector DB
+    participant Adapter as MCP Adapter
+    participant External as External System
+
+    User-&gt;&gt;UI: Query Request
+    UI-&gt;&gt;API: HTTP Request
+    API-&gt;&gt;Auth: Validate Token
+    Auth--&gt;&gt;API: User Context
+    API-&gt;&gt;Guardrails: Check Input Safety
+    Guardrails--&gt;&gt;API: Safety Check Pass
+
+    API-&gt;&gt;Planner: Route Intent
+    Planner-&gt;&gt;Agent: Process Query
+    Agent-&gt;&gt;Memory: Get Context
+    Memory-&gt;&gt;Postgres: Retrieve History
+    Postgres--&gt;&gt;Memory: Return Context
+    Memory--&gt;&gt;Agent: Context Data
+
+    Agent-&gt;&gt;Retriever: Search Data
+    Retriever-&gt;&gt;Postgres: Structured Query (SQL)
+    Retriever-&gt;&gt;Milvus: Vector Search (Milvus)
+    Postgres--&gt;&gt;Retriever: SQL Results
+    Milvus--&gt;&gt;Retriever: Vector Results
+    Retriever--&gt;&gt;Agent: Ranked Results
+
+    Note over Agent,MCP: MCP Tool Discovery and Execution
+    Agent-&gt;&gt;MCP: Discover Tools
+    MCP-&gt;&gt;MCP_SRV: Tool Discovery Request
+    MCP_SRV--&gt;&gt;MCP: Available Tools
+    MCP--&gt;&gt;Agent: Tool List
+
+    Agent-&gt;&gt;MCP: Execute Tool
+    MCP-&gt;&gt;MCP_SRV: Tool Execution Request
+    MCP_SRV-&gt;&gt;Adapter: Route to Adapter
+    Adapter-&gt;&gt;External: External System Call
+    External--&gt;&gt;Adapter: External Data
+    Adapter--&gt;&gt;MCP_SRV: Tool Result
+    MCP_SRV--&gt;&gt;MCP: Tool Response
+    MCP--&gt;&gt;Agent: Tool Data
+
+    Agent-&gt;&gt;NIM: Generate Response
+    NIM--&gt;&gt;Agent: Natural Language + Structured
+    Agent-&gt;&gt;Memory: Store Conversation
+    Memory-&gt;&gt;Postgres: Persist Data
+
+    Agent--&gt;&gt;Planner: Response
+    Planner-&gt;&gt;Guardrails: Check Output Safety
+    Guardrails--&gt;&gt;Planner: Safety Check Pass
+    Planner--&gt;&gt;API: Final Response
+    API--&gt;&gt;UI: Structured Response
+    UI--&gt;&gt;User: Display Results
+
+    Note over Adapter,External: MCP-Enabled External System Integration
+    Note over MCP,MCP_SRV: MCP Tool Discovery &amp; Execution</code></pre>
+<h2 id="component-status-implementation-details">Component Status &amp; Implementation Details<a class="headerlink" href="#component-status-implementation-details" title="Permanent link">¶</a></h2>
+<h3 id="fully-implemented-components">Fully Implemented Components<a class="headerlink" href="#fully-implemented-components" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Status</th>
+<th>Technology</th>
+<th>Port</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>React Web App</strong></td>
+<td>Complete</td>
+<td>React 19.2.3, Material-UI, CRACO</td>
+<td>3001</td>
+<td>Real-time chat, dashboard, authentication (binds to 0.0.0.0:3001)</td>
+</tr>
+<tr>
+<td><strong>FastAPI Gateway</strong></td>
+<td>Complete</td>
+<td>FastAPI, Pydantic v2</td>
+<td>8001</td>
+<td>REST API with OpenAPI/Swagger</td>
+</tr>
+<tr>
+<td><strong>JWT Authentication</strong></td>
+<td>Complete</td>
+<td>PyJWT, bcrypt</td>
+<td>-</td>
+<td>5 user roles, RBAC permissions</td>
+</tr>
+<tr>
+<td><strong>NeMo Guardrails</strong></td>
+<td>Complete</td>
+<td>NeMo Guardrails</td>
+<td>-</td>
+<td>Content safety, compliance checks</td>
+</tr>
+<tr>
+<td><strong>MCP Integration</strong></td>
+<td>Complete</td>
+<td>MCP Protocol</td>
+<td>-</td>
+<td>Tool discovery, execution, monitoring</td>
+</tr>
+<tr>
+<td><strong>MCP Server</strong></td>
+<td>Complete</td>
+<td>Python, async</td>
+<td>-</td>
+<td>Tool registration, discovery, execution</td>
+</tr>
+<tr>
+<td><strong>MCP Client</strong></td>
+<td>Complete</td>
+<td>Python, async</td>
+<td>-</td>
+<td>Multi-server communication</td>
+</tr>
+<tr>
+<td><strong>Planner Agent</strong></td>
+<td>Complete</td>
+<td>LangGraph + MCP</td>
+<td>-</td>
+<td>Intent classification, routing</td>
+</tr>
+<tr>
+<td><strong>Equipment &amp; Asset Operations Agent</strong></td>
+<td>Complete</td>
+<td>Python, async + MCP</td>
+<td>-</td>
+<td>MCP-enabled equipment management (MCP version is primary; non-MCP version also exists)</td>
+</tr>
+<tr>
+<td><strong>Operations Agent</strong></td>
+<td>Complete</td>
+<td>Python, async + MCP</td>
+<td>-</td>
+<td>MCP-enabled operations management (MCP version is primary; non-MCP version also exists)</td>
+</tr>
+<tr>
+<td><strong>Safety Agent</strong></td>
+<td>Complete</td>
+<td>Python, async + MCP</td>
+<td>-</td>
+<td>MCP-enabled safety management (MCP version is primary; non-MCP version also exists)</td>
+</tr>
+<tr>
+<td><strong>Forecasting Agent</strong></td>
+<td>Complete</td>
+<td>Python, async + MCP</td>
+<td>-</td>
+<td>Demand forecasting, reorder recommendations (MCP version is primary)</td>
+</tr>
+<tr>
+<td><strong>Document Extraction Agent</strong></td>
+<td>Complete</td>
+<td>Python, async + NVIDIA NeMo</td>
+<td>-</td>
+<td>6-stage document processing pipeline</td>
+</tr>
+<tr>
+<td><strong>Memory Manager</strong></td>
+<td>Complete</td>
+<td>PostgreSQL, Redis</td>
+<td>-</td>
+<td>Session context, conversation history</td>
+</tr>
+<tr>
+<td><strong>NVIDIA NIMs</strong></td>
+<td>Complete</td>
+<td>Llama 3.3 Nemotron Super 49B, llama-3_2-nv-embedqa-1b-v2</td>
+<td>-</td>
+<td>AI-powered responses</td>
+</tr>
+<tr>
+<td><strong>Document Processing Pipeline</strong></td>
+<td>Complete</td>
+<td>NVIDIA NeMo Models</td>
+<td>-</td>
+<td>6-stage intelligent document processing</td>
+</tr>
+<tr>
+<td><strong>Forecasting Service</strong></td>
+<td>Complete</td>
+<td>Python, scikit-learn, XGBoost</td>
+<td>-</td>
+<td>Multi-model ensemble forecasting</td>
+</tr>
+<tr>
+<td><strong>Forecasting Training</strong></td>
+<td>Complete</td>
+<td>Python, RAPIDS cuML (GPU)</td>
+<td>-</td>
+<td>Phase 1-3 training pipeline</td>
+</tr>
+<tr>
+<td><strong>Hybrid Retrieval</strong></td>
+<td>Complete</td>
+<td>PostgreSQL, Milvus</td>
+<td>-</td>
+<td>Structured + vector search</td>
+</tr>
+<tr>
+<td><strong>ERP Adapter (MCP)</strong></td>
+<td>Complete</td>
+<td>MCP Protocol</td>
+<td>-</td>
+<td>SAP ECC, Oracle integration</td>
+</tr>
+<tr>
+<td><strong>WMS Adapter (MCP)</strong></td>
+<td>Complete</td>
+<td>MCP Protocol</td>
+<td>-</td>
+<td>SAP EWM, Manhattan, Oracle</td>
+</tr>
+<tr>
+<td><strong>IoT Adapter (MCP)</strong></td>
+<td>Complete</td>
+<td>MCP Protocol</td>
+<td>-</td>
+<td>Equipment &amp; environmental sensors</td>
+</tr>
+<tr>
+<td><strong>RFID/Barcode Adapter (MCP)</strong></td>
+<td>Complete</td>
+<td>MCP Protocol</td>
+<td>-</td>
+<td>Zebra, Honeywell, Generic</td>
+</tr>
+<tr>
+<td><strong>Time Attendance Adapter (MCP)</strong></td>
+<td>Complete</td>
+<td>MCP Protocol</td>
+<td>-</td>
+<td>Biometric, Card, Mobile</td>
+</tr>
+<tr>
+<td><strong>Forecasting Adapter (MCP)</strong></td>
+<td>Complete</td>
+<td>MCP Protocol</td>
+<td>-</td>
+<td>Demand forecasting tools</td>
+</tr>
+<tr>
+<td><strong>Monitoring Stack</strong></td>
+<td>Complete</td>
+<td>Prometheus, Grafana</td>
+<td>9090, 3000</td>
+<td>Comprehensive observability</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pending-components">Pending Components<a class="headerlink" href="#pending-components" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Status</th>
+<th>Technology</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>React Native Mobile</strong></td>
+<td>Pending</td>
+<td>React Native</td>
+<td>Handheld devices, field operations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="api-endpoints">API Endpoints<a class="headerlink" href="#api-endpoints" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Method</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/v1/chat</code></td>
+<td>POST</td>
+<td>Working</td>
+<td>AI-powered chat with LLM integration</td>
+</tr>
+<tr>
+<td><code>/api/v1/equipment</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>Equipment &amp; asset management, status lookup</td>
+</tr>
+<tr>
+<td><code>/api/v1/operations</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>Workforce, tasks, KPIs</td>
+</tr>
+<tr>
+<td><code>/api/v1/safety</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>Incidents, policies, compliance</td>
+</tr>
+<tr>
+<td><code>/api/v1/forecasting/dashboard</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>Comprehensive forecasting dashboard</td>
+</tr>
+<tr>
+<td><code>/api/v1/forecasting/real-time</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>Real-time demand predictions</td>
+</tr>
+<tr>
+<td><code>/api/v1/forecasting/reorder-recommendations</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>Automated reorder suggestions</td>
+</tr>
+<tr>
+<td><code>/api/v1/forecasting/model-performance</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>Model performance metrics</td>
+</tr>
+<tr>
+<td><code>/api/v1/forecasting/business-intelligence</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>Business analytics and insights</td>
+</tr>
+<tr>
+<td><code>/api/v1/forecasting/batch-forecast</code></td>
+<td>POST</td>
+<td>Working</td>
+<td>Batch forecast for multiple SKUs</td>
+</tr>
+<tr>
+<td><code>/api/v1/training/history</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>Training history</td>
+</tr>
+<tr>
+<td><code>/api/v1/training/start</code></td>
+<td>POST</td>
+<td>Working</td>
+<td>Start model training</td>
+</tr>
+<tr>
+<td><code>/api/v1/training/status</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>Training status</td>
+</tr>
+<tr>
+<td><code>/api/v1/wms</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>External WMS integration</td>
+</tr>
+<tr>
+<td><code>/api/v1/erp</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>ERP system integration</td>
+</tr>
+<tr>
+<td><code>/api/v1/iot</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>IoT sensor data</td>
+</tr>
+<tr>
+<td><code>/api/v1/scanning</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>RFID/Barcode scanning systems</td>
+</tr>
+<tr>
+<td><code>/api/v1/attendance</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>Time &amp; attendance tracking</td>
+</tr>
+<tr>
+<td><code>/api/v1/reasoning</code></td>
+<td>POST</td>
+<td>Working</td>
+<td>AI reasoning and analysis</td>
+</tr>
+<tr>
+<td><code>/api/v1/auth</code></td>
+<td>POST</td>
+<td>Working</td>
+<td>Login, token management</td>
+</tr>
+<tr>
+<td><code>/api/v1/health</code></td>
+<td>GET</td>
+<td>Working</td>
+<td>System health checks</td>
+</tr>
+<tr>
+<td><code>/api/v1/mcp</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>MCP tool management, discovery, and testing</td>
+</tr>
+<tr>
+<td><code>/api/v1/document</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>Document processing pipeline</td>
+</tr>
+<tr>
+<td><code>/api/v1/inventory</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>Inventory management</td>
+</tr>
+<tr>
+<td><code>/api/v1/migrations</code></td>
+<td>GET/POST</td>
+<td>Working</td>
+<td>Database migrations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="infrastructure-components">Infrastructure Components<a class="headerlink" href="#infrastructure-components" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Status</th>
+<th>Technology</th>
+<th>Port</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PostgreSQL/TimescaleDB</strong></td>
+<td>Running</td>
+<td>Port 5435</td>
+<td>Structured data, time-series (PostgreSQL 14-16 varies by deployment)</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Milvus</strong></td>
+<td>Running</td>
+<td>Port 19530</td>
+<td>Vector database, semantic search</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>Running</td>
+<td>Port 6379</td>
+<td>Cache, sessions, pub/sub</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Apache Kafka</strong></td>
+<td>Running</td>
+<td>Port 9092</td>
+<td>Event streaming, data pipeline</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>MinIO</strong></td>
+<td>Running</td>
+<td>Port 9000</td>
+<td>Object storage, file management</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>etcd</strong></td>
+<td>Running</td>
+<td>Port 2379</td>
+<td>Configuration management</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Prometheus</strong></td>
+<td>Running</td>
+<td>Port 9090</td>
+<td>Metrics collection</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Grafana</strong></td>
+<td>Running</td>
+<td>Port 3000</td>
+<td>Dashboards, visualization</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>AlertManager</strong></td>
+<td>Running</td>
+<td>Port 9093</td>
+<td>Alert management</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="forecasting-system-architecture">Forecasting System Architecture<a class="headerlink" href="#forecasting-system-architecture" title="Permanent link">¶</a></h2>
+<p>The Forecasting Agent provides AI-powered demand forecasting with the following capabilities:</p>
+<h3 id="forecasting-models">Forecasting Models<a class="headerlink" href="#forecasting-models" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Random Forest</strong> - 82% accuracy, 15.8% MAPE</li>
+<li><strong>XGBoost</strong> - 79.5% accuracy, 15.0% MAPE</li>
+<li><strong>Gradient Boosting</strong> - 78% accuracy, 14.2% MAPE</li>
+<li><strong>Linear Regression</strong> - 76.4% accuracy, 15.0% MAPE</li>
+<li><strong>Ridge Regression</strong> - 75% accuracy, 16.3% MAPE</li>
+<li><strong>Support Vector Regression</strong> - 70% accuracy, 20.1% MAPE</li>
+</ul>
+<h3 id="model-availability-by-phase">Model Availability by Phase<a class="headerlink" href="#model-availability-by-phase" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Phase 1 &amp; 2</th>
+<th>Phase 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Random Forest</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>XGBoost</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Time Series</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Gradient Boosting</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Ridge Regression</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>SVR</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Linear Regression</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="training-pipeline">Training Pipeline<a class="headerlink" href="#training-pipeline" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Phase 1 &amp; 2</strong> - Data extraction, feature engineering, basic model training</li>
+<li><strong>Phase 3</strong> - Advanced models, hyperparameter optimization, ensemble methods</li>
+<li><strong>GPU Acceleration</strong> - NVIDIA RAPIDS cuML integration for enterprise-scale forecasting (10-100x faster)</li>
+</ul>
+<h3 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Real-Time Predictions</strong> - Live demand forecasts with confidence intervals</li>
+<li><strong>Automated Reorder Recommendations</strong> - AI-suggested stock orders with urgency levels</li>
+<li><strong>Business Intelligence Dashboard</strong> - Comprehensive analytics and performance monitoring</li>
+<li><strong>Model Performance Tracking</strong> - Live accuracy, MAPE, drift scores from actual predictions</li>
+<li><strong>Redis Caching</strong> - Intelligent caching for improved performance</li>
+</ul>
+<h2 id="nvidia-nims-overview">NVIDIA NIMs Overview<a class="headerlink" href="#nvidia-nims-overview" title="Permanent link">¶</a></h2>
+<p>The Warehouse Operational Assistant uses multiple NVIDIA NIMs (NVIDIA Inference Microservices) for various AI capabilities. These can be deployed as cloud endpoints or self-hosted instances.</p>
+<h3 id="nvidia-nims-used-in-the-system">NVIDIA NIMs Used in the System<a class="headerlink" href="#nvidia-nims-used-in-the-system" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>NIM Service</th>
+<th>Model</th>
+<th>Purpose</th>
+<th>Endpoint Type</th>
+<th>Environment Variable</th>
+<th>Default Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLM Service</strong></td>
+<td>Llama 3.3 Nemotron Super 49B</td>
+<td>Primary language model for chat, reasoning, and generation</td>
+<td>Cloud (api.brev.dev) or Self-hosted</td>
+<td><code>LLM_NIM_URL</code></td>
+<td><code>https://api.brev.dev/v1</code></td>
+</tr>
+<tr>
+<td><strong>Embedding Service</strong></td>
+<td>llama-3_2-nv-embedqa-1b-v2</td>
+<td>Semantic search embeddings for RAG</td>
+<td>Cloud (integrate.api.nvidia.com) or Self-hosted</td>
+<td><code>EMBEDDING_NIM_URL</code></td>
+<td><code>https://integrate.api.nvidia.com/v1</code></td>
+</tr>
+<tr>
+<td><strong>NeMo Retriever</strong></td>
+<td>NeMo Retriever</td>
+<td>Document preprocessing and structure analysis</td>
+<td>Cloud or Self-hosted</td>
+<td><code>NEMO_RETRIEVER_URL</code></td>
+<td><code>https://integrate.api.nvidia.com/v1</code></td>
+</tr>
+<tr>
+<td><strong>NeMo OCR</strong></td>
+<td>NeMoRetriever-OCR-v1</td>
+<td>Intelligent OCR with layout understanding</td>
+<td>Cloud or Self-hosted</td>
+<td><code>NEMO_OCR_URL</code></td>
+<td><code>https://integrate.api.nvidia.com/v1</code></td>
+</tr>
+<tr>
+<td><strong>Nemotron Parse</strong></td>
+<td>Nemotron Parse</td>
+<td>Advanced document parsing and extraction</td>
+<td>Cloud or Self-hosted</td>
+<td><code>NEMO_PARSE_URL</code></td>
+<td><code>https://integrate.api.nvidia.com/v1</code></td>
+</tr>
+<tr>
+<td><strong>Small LLM</strong></td>
+<td>nemotron-nano-12b-v2-vl</td>
+<td>Structured data extraction and entity recognition</td>
+<td>Cloud or Self-hosted</td>
+<td><code>LLAMA_NANO_VL_URL</code></td>
+<td><code>https://integrate.api.nvidia.com/v1</code></td>
+</tr>
+<tr>
+<td><strong>Large LLM Judge</strong></td>
+<td>Llama 3.3 Nemotron Super 49B</td>
+<td>Quality validation and confidence scoring</td>
+<td>Cloud or Self-hosted</td>
+<td><code>LLM_NIM_URL</code></td>
+<td><code>https://api.brev.dev/v1</code></td>
+</tr>
+<tr>
+<td><strong>NeMo Guardrails</strong></td>
+<td>NeMo Guardrails</td>
+<td>Content safety and compliance validation</td>
+<td>Cloud or Self-hosted</td>
+<td><code>RAIL_API_KEY</code> (uses NVIDIA endpoint)</td>
+<td><code>https://integrate.api.nvidia.com/v1</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="nim-deployment-options">NIM Deployment Options<a class="headerlink" href="#nim-deployment-options" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Deployment Type</th>
+<th>Description</th>
+<th>Use Case</th>
+<th>Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cloud Endpoints</strong></td>
+<td>NVIDIA-hosted NIM services</td>
+<td>Production deployments, quick setup</td>
+<td>Use default endpoints (api.brev.dev or integrate.api.nvidia.com)</td>
+</tr>
+<tr>
+<td><strong>Self-Hosted NIMs</strong></td>
+<td>Deploy NIMs on your own infrastructure</td>
+<td>Data privacy, cost control, custom requirements</td>
+<td>Set custom endpoint URLs (e.g., <code>http://localhost:8000/v1</code> or <code>https://your-nim-instance.com/v1</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="installation-requirements">Installation Requirements<a class="headerlink" href="#installation-requirements" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Installation Type</th>
+<th>Required For</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Llama 3.3 Nemotron Super 49B</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>Core LLM functionality, chat, reasoning</td>
+<td>Required - Can use cloud endpoint (api.brev.dev) or deploy locally</td>
+</tr>
+<tr>
+<td><strong>llama-3_2-nv-embedqa-1b-v2</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>Semantic search, RAG, vector embeddings</td>
+<td>Required - Can use cloud endpoint or deploy locally</td>
+</tr>
+<tr>
+<td><strong>NeMo Retriever</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>Document preprocessing (Stage 1)</td>
+<td>Required for document processing pipeline</td>
+</tr>
+<tr>
+<td><strong>NeMoRetriever-OCR-v1</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>OCR processing (Stage 2)</td>
+<td>Required for document processing pipeline</td>
+</tr>
+<tr>
+<td><strong>Nemotron Parse</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>Document parsing (Stage 2)</td>
+<td>Required for document processing pipeline</td>
+</tr>
+<tr>
+<td><strong>nemotron-nano-12b-v2-vl</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>Small LLM processing (Stage 3)</td>
+<td>Required for document processing pipeline</td>
+</tr>
+<tr>
+<td><strong>Llama 3.3 Nemotron Super 49B</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>Quality validation (Stage 5)</td>
+<td>Required for document processing pipeline</td>
+</tr>
+<tr>
+<td><strong>NeMo Guardrails</strong></td>
+<td>Endpoint (Cloud or Self-hosted)</td>
+<td>Content safety and compliance</td>
+<td>Required for production deployments</td>
+</tr>
+<tr>
+<td><strong>Milvus</strong></td>
+<td>Local Installation</td>
+<td>Vector database for embeddings</td>
+<td>Required - Install locally or via Docker</td>
+</tr>
+<tr>
+<td><strong>PostgreSQL/TimescaleDB</strong></td>
+<td>Local Installation</td>
+<td>Structured data storage</td>
+<td>Required - Install locally or via Docker</td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>Local Installation</td>
+<td>Caching and session management</td>
+<td>Required - Install locally or via Docker</td>
+</tr>
+<tr>
+<td><strong>NVIDIA GPU Drivers</strong></td>
+<td>Local Installation</td>
+<td>GPU acceleration for Milvus (cuVS)</td>
+<td>Optional but recommended for performance</td>
+</tr>
+<tr>
+<td><strong>NVIDIA RAPIDS</strong></td>
+<td>Local Installation</td>
+<td>GPU-accelerated forecasting</td>
+<td>Optional - For enhanced forecasting performance</td>
+</tr>
+</tbody>
+</table>
+<h3 id="endpoint-configuration-guide">Endpoint Configuration Guide<a class="headerlink" href="#endpoint-configuration-guide" title="Permanent link">¶</a></h3>
+<p><strong>For Cloud Endpoints:</strong>
+- Use the default endpoints provided by NVIDIA
+- 49B model: <code>https://api.brev.dev/v1</code>
+- Other NIMs: <code>https://integrate.api.nvidia.com/v1</code>
+- All use the same <code>NVIDIA_API_KEY</code> for authentication</p>
+<p><strong>For Self-Hosted NIMs:</strong>
+- Deploy NIMs on your own infrastructure (local or cloud)
+- Configure endpoint URLs in <code>.env</code> file (e.g., <code>http://localhost:8000/v1</code>)
+- Ensure endpoints are accessible and properly configured
+- Use appropriate API keys for authentication
+- See NVIDIA NIM documentation for deployment instructions</p>
+<p><strong>Key Points:</strong>
+- All NIMs can be consumed via HTTP/HTTPS endpoints
+- You can mix cloud and self-hosted NIMs (e.g., cloud LLM + self-hosted embeddings)
+- Self-hosted NIMs provide data privacy and cost control benefits
+- Cloud endpoints offer quick setup and managed infrastructure
+- The same API key typically works for both cloud endpoints</p>
+<h2 id="document-processing-pipeline-6-stage-nvidia-nemo">Document Processing Pipeline (6-Stage NVIDIA NeMo)<a class="headerlink" href="#document-processing-pipeline-6-stage-nvidia-nemo" title="Permanent link">¶</a></h2>
+<p>The Document Extraction Agent implements a comprehensive <strong>6-stage pipeline</strong> using NVIDIA NeMo models:</p>
+<h3 id="stage-1-document-preprocessing">Stage 1: Document Preprocessing<a class="headerlink" href="#stage-1-document-preprocessing" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Model</strong>: NeMo Retriever</li>
+<li><strong>Purpose</strong>: PDF decomposition, image extraction, and document structure analysis</li>
+<li><strong>Capabilities</strong>: Multi-format support, document type detection, preprocessing optimization</li>
+</ul>
+<h3 id="stage-2-intelligent-ocr">Stage 2: Intelligent OCR<a class="headerlink" href="#stage-2-intelligent-ocr" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Model</strong>: NeMoRetriever-OCR-v1 + Nemotron Parse</li>
+<li><strong>Purpose</strong>: Advanced text extraction with layout understanding</li>
+<li><strong>Capabilities</strong>: Multi-language OCR, table extraction, form recognition, layout preservation</li>
+</ul>
+<h3 id="stage-3-small-llm-processing">Stage 3: Small LLM Processing<a class="headerlink" href="#stage-3-small-llm-processing" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Model</strong>: nemotron-nano-12b-v2-vl</li>
+<li><strong>Purpose</strong>: Structured data extraction and entity recognition</li>
+<li><strong>Capabilities</strong>: Entity extraction, data structuring, content analysis, metadata generation</li>
+</ul>
+<h3 id="stage-4-embedding-indexing">Stage 4: Embedding &amp; Indexing<a class="headerlink" href="#stage-4-embedding-indexing" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Model</strong>: llama-3_2-nv-embedqa-1b-v2</li>
+<li><strong>Purpose</strong>: Vector embedding generation and semantic indexing</li>
+<li><strong>Capabilities</strong>: Semantic search preparation, content indexing, similarity matching</li>
+</ul>
+<h3 id="stage-5-large-llm-judge">Stage 5: Large LLM Judge<a class="headerlink" href="#stage-5-large-llm-judge" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Model</strong>: Llama 3.3 Nemotron Super 49B</li>
+<li><strong>Purpose</strong>: Quality validation and confidence scoring</li>
+<li><strong>Capabilities</strong>: Content validation, quality assessment, confidence scoring, error detection</li>
+</ul>
+<h3 id="stage-6-intelligent-routing">Stage 6: Intelligent Routing<a class="headerlink" href="#stage-6-intelligent-routing" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Model</strong>: Custom routing logic</li>
+<li><strong>Purpose</strong>: Quality-based routing and result optimization</li>
+<li><strong>Capabilities</strong>: Result routing, quality optimization, final output generation</li>
+</ul>
+<h2 id="deployment-specific-configurations">Deployment-Specific Configurations<a class="headerlink" href="#deployment-specific-configurations" title="Permanent link">¶</a></h2>
+<p>The system supports multiple deployment configurations with different component versions:</p>
+<h3 id="postgresqltimescaledb-versions-by-deployment">PostgreSQL/TimescaleDB Versions by Deployment<a class="headerlink" href="#postgresqltimescaledb-versions-by-deployment" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Deployment File</th>
+<th>PostgreSQL Version</th>
+<th>TimescaleDB Version</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker-compose.versioned.yaml</code></td>
+<td>PostgreSQL 14</td>
+<td>Latest TimescaleDB</td>
+<td>Versioned/production deployments</td>
+</tr>
+<tr>
+<td><code>docker-compose.ci.yaml</code></td>
+<td>PostgreSQL 14</td>
+<td>Latest TimescaleDB</td>
+<td>CI/CD pipeline testing</td>
+</tr>
+<tr>
+<td><code>docker-compose.gpu.yaml</code></td>
+<td>PostgreSQL 15</td>
+<td>Latest TimescaleDB</td>
+<td>GPU-accelerated deployments</td>
+</tr>
+<tr>
+<td><code>docker-compose.rapids.yml</code></td>
+<td>PostgreSQL 15</td>
+<td>Latest TimescaleDB</td>
+<td>RAPIDS forecasting deployments</td>
+</tr>
+<tr>
+<td><code>docker-compose.dev.yaml</code></td>
+<td>PostgreSQL 16</td>
+<td>TimescaleDB 2.15.2</td>
+<td>Development environment</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: All deployments use TimescaleDB for time-series data capabilities. The PostgreSQL version varies based on deployment requirements and compatibility needs.</p>
+<h3 id="component-implementation-references">Component Implementation References<a class="headerlink" href="#component-implementation-references" title="Permanent link">¶</a></h3>
+<p>Key implementation files for major components:</p>
+<ul>
+<li><strong>MCP Services</strong>: <code>src/api/services/mcp/</code></li>
+<li>Server: <code>src/api/services/mcp/server.py</code></li>
+<li>Client: <code>src/api/services/mcp/client.py</code></li>
+<li>Tool Discovery: <code>src/api/services/mcp/tool_discovery.py</code></li>
+<li>Tool Binding: <code>src/api/services/mcp/tool_binding.py</code></li>
+<li>Tool Routing: <code>src/api/services/mcp/tool_routing.py</code></li>
+<li>Tool Validation: <code>src/api/services/mcp/tool_validation.py</code></li>
+<li>Service Discovery: <code>src/api/services/mcp/service_discovery.py</code></li>
+<li>Monitoring: <code>src/api/services/mcp/monitoring.py</code></li>
+<li>
+<p>Rollback: <code>src/api/services/mcp/rollback.py</code></p>
+</li>
+<li>
+<p><strong>Agents</strong>: <code>src/api/agents/</code></p>
+</li>
+<li>Equipment: <code>src/api/agents/inventory/equipment_agent.py</code> (non-MCP), <code>src/api/agents/inventory/mcp_equipment_agent.py</code> (MCP)</li>
+<li>Operations: <code>src/api/agents/operations/operations_agent.py</code> (non-MCP), <code>src/api/agents/operations/mcp_operations_agent.py</code> (MCP)</li>
+<li>Safety: <code>src/api/agents/safety/safety_agent.py</code></li>
+<li>Forecasting: <code>src/api/agents/forecasting/forecasting_agent.py</code></li>
+<li>
+<p>Document: <code>src/api/agents/document/document_extraction_agent.py</code></p>
+</li>
+<li>
+<p><strong>Chat Enhancement Services</strong>: <code>src/api/services/</code></p>
+</li>
+<li>Parameter Validation: <code>src/api/services/mcp/parameter_validator.py</code> (<code>MCPParameterValidator</code>)</li>
+<li>Response Formatting: <code>src/api/services/validation/response_enhancer.py</code> (<code>ResponseEnhancer</code>)</li>
+<li>Conversation Memory: <code>src/api/services/memory/conversation_memory.py</code> (<code>ConversationMemoryService</code>)</li>
+<li>Evidence Collection: <code>src/api/services/evidence/evidence_collector.py</code> (<code>EvidenceCollector</code>)</li>
+<li>Quick Actions: <code>src/api/services/quick_actions/smart_quick_actions.py</code> (<code>SmartQuickActions</code>)</li>
+<li>
+<p>Response Validation: <code>src/api/services/validation/response_validator.py</code> (<code>ResponseValidator</code>)</p>
+</li>
+<li>
+<p><strong>Planner Graphs</strong>: <code>src/api/graphs/</code></p>
+</li>
+<li>MCP Integrated Planner: <code>src/api/graphs/mcp_integrated_planner_graph.py</code></li>
+<li>MCP Planner: <code>src/api/graphs/mcp_planner_graph.py</code></li>
+<li>
+<p>Standard Planner: <code>src/api/graphs/planner_graph.py</code></p>
+</li>
+<li>
+<p><strong>API Routers</strong>: <code>src/api/routers/</code></p>
+</li>
+<li>All endpoints: <code>src/api/routers/*.py</code></li>
+<li>
+<p>Main app: <code>src/api/app.py</code></p>
+</li>
+<li>
+<p><strong>Retrieval Services</strong>: <code>src/retrieval/</code></p>
+</li>
+<li>Hybrid Retriever: <code>src/retrieval/hybrid_retriever.py</code></li>
+<li>GPU Hybrid Retriever: <code>src/retrieval/gpu_hybrid_retriever.py</code></li>
+<li>Structured Retriever: <code>src/retrieval/structured/</code></li>
+<li>
+<p>Vector Retriever: <code>src/retrieval/vector/</code></p>
+</li>
+<li>
+<p><strong>MCP Adapters</strong>: <code>src/api/services/mcp/adapters/</code></p>
+</li>
+<li>ERP: <code>src/api/services/mcp/adapters/erp_adapter.py</code></li>
+<li>WMS: <code>src/api/services/mcp/adapters/wms_adapter.py</code></li>
+<li>IoT: <code>src/api/services/mcp/adapters/iot_adapter.py</code></li>
+<li>RFID/Barcode: <code>src/api/services/mcp/adapters/rfid_barcode_adapter.py</code></li>
+<li>Time Attendance: <code>src/api/services/mcp/adapters/time_attendance_adapter.py</code></li>
+<li>Forecasting: <code>src/api/services/mcp/adapters/forecasting_adapter.py</code></li>
+</ul>
+<h2 id="version-history">Version History<a class="headerlink" href="#version-history" title="Permanent link">¶</a></h2>
+<h3 id="2025-01-xx-architecture-documentation-update">2025-01-XX - Architecture Documentation Update<a class="headerlink" href="#2025-01-xx-architecture-documentation-update" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>React</strong>: Updated from 18.2+ to 19.2.3 (security patches and latest stable)</li>
+<li><strong>FastAPI</strong>: Updated from 0.119+ to &gt;=0.120.0 (latest stable with security fixes)</li>
+<li><strong>aiohttp</strong>: Updated from 3.13.2 to &gt;=3.13.3 (security: zip bomb DoS vulnerability fix)</li>
+<li><strong>PostgreSQL</strong>: Clarified version range (14-16) varies by deployment configuration</li>
+<li><strong>LangGraph</strong>: Updated to &gt;=1.0.5 (security: CVE-2025-8709 fix)</li>
+<li><strong>LangGraph Checkpoint</strong>: Added &gt;=3.0.0 (security: CVE-2025-64439 RCE fix)</li>
+<li><strong>LangChain Core</strong>: Added &gt;=1.2.6 (security: CVE-2025-68664 fix)</li>
+<li><strong>Documentation</strong>: Added implementation file references and deployment-specific configuration notes</li>
+<li><strong>Documentation</strong>: Added service class names to diagram labels for clarity</li>
+</ul>
+<h3 id="previous-versions">Previous Versions<a class="headerlink" href="#previous-versions" title="Permanent link">¶</a></h3>
+<ul>
+<li>Initial architecture documentation with React 18, FastAPI 0.119+, and PostgreSQL 15+</li>
+</ul>
+<h2 id="system-capabilities">System Capabilities<a class="headerlink" href="#system-capabilities" title="Permanent link">¶</a></h2>
+<h3 id="fully-operational-features">Fully Operational Features<a class="headerlink" href="#fully-operational-features" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>AI-Powered Chat</strong>: Real-time conversation with NVIDIA NIMs integration</li>
+<li><strong>Document Processing</strong>: 6-stage NVIDIA NeMo pipeline for intelligent document processing</li>
+<li><strong>Equipment &amp; Asset Operations</strong>: Equipment availability, maintenance scheduling, asset tracking</li>
+<li><strong>Operations Coordination</strong>: Workforce scheduling, task management, KPI tracking</li>
+<li><strong>Safety &amp; Compliance</strong>: Incident reporting, policy lookup, safety checklists, alert broadcasting</li>
+<li><strong>Demand Forecasting</strong>: Multi-model ensemble forecasting with automated reorder recommendations</li>
+<li><strong>Authentication &amp; Authorization</strong>: JWT-based auth with 5 user roles and RBAC</li>
+<li><strong>Content Safety</strong>: NeMo Guardrails for input/output validation</li>
+<li><strong>Memory Management</strong>: Session context, conversation history, user profiles</li>
+<li><strong>Hybrid Search</strong>: Structured SQL + vector semantic search (90%+ routing accuracy)</li>
+<li><strong>WMS Integration</strong>: SAP EWM, Manhattan, Oracle WMS adapters</li>
+<li><strong>IoT Integration</strong>: Equipment monitoring, environmental sensors, safety systems</li>
+<li><strong>Monitoring &amp; Observability</strong>: Prometheus metrics, Grafana dashboards, alerting</li>
+<li><strong>Real-time UI</strong>: React dashboard with live chat interface</li>
+<li><strong>Chat Enhancement Services</strong>: Parameter validation, response formatting, conversation memory</li>
+<li><strong>GPU Acceleration</strong>: NVIDIA cuVS for vector search (19x performance), RAPIDS for forecasting</li>
+</ul>
+<h3 id="planned-features">Planned Features<a class="headerlink" href="#planned-features" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Mobile App</strong>: React Native for handheld devices and field operations</li>
+</ul>
+<h2 id="technology-stack">Technology Stack<a class="headerlink" href="#technology-stack" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+<th>Version</th>
+<th>Status</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>React</td>
+<td>19.2.3</td>
+<td>Complete</td>
+<td>Web UI with Material-UI</td>
+</tr>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>Node.js</td>
+<td>20.0+ (18.17+ min)</td>
+<td>Complete</td>
+<td>Runtime environment (LTS recommended)</td>
+</tr>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>CRACO</td>
+<td>7.1+</td>
+<td>Complete</td>
+<td>Webpack configuration override</td>
+</tr>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>React Native</td>
+<td>-</td>
+<td>Pending</td>
+<td>Mobile app for field operations</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>FastAPI</td>
+<td>&gt;=0.120.0</td>
+<td>Complete</td>
+<td>REST API with OpenAPI/Swagger</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>Pydantic</td>
+<td>&gt;=2.0.0</td>
+<td>Complete</td>
+<td>Data validation &amp; serialization</td>
+</tr>
+<tr>
+<td><strong>Orchestration</strong></td>
+<td>LangGraph</td>
+<td>&gt;=1.0.5</td>
+<td>Complete</td>
+<td>Multi-agent coordination (in-memory state, no SQLite checkpoint)</td>
+</tr>
+<tr>
+<td><strong>Orchestration</strong></td>
+<td>LangGraph Checkpoint</td>
+<td>&gt;=3.0.0</td>
+<td>Complete</td>
+<td>Checkpoint management (pinned for security, but using in-memory state)</td>
+</tr>
+<tr>
+<td><strong>Orchestration</strong></td>
+<td>LangChain</td>
+<td>&gt;=0.1.11</td>
+<td>Complete</td>
+<td>LLM framework integration</td>
+</tr>
+<tr>
+<td><strong>Orchestration</strong></td>
+<td>LangChain Core</td>
+<td>&gt;=1.2.6</td>
+<td>Complete</td>
+<td>Core LangChain functionality</td>
+</tr>
+<tr>
+<td><strong>AI/LLM</strong></td>
+<td>NVIDIA NIM</td>
+<td>Latest</td>
+<td>Complete</td>
+<td>Llama 3.3 Nemotron Super 49B + Embeddings</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>PostgreSQL</td>
+<td>14-16 (varies by deployment)</td>
+<td>Complete</td>
+<td>Structured data storage (pg14: versioned/ci, pg15: gpu/rapids, pg16: dev)</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>TimescaleDB</td>
+<td>2.11+ (varies by deployment)</td>
+<td>Complete</td>
+<td>Time-series data</td>
+</tr>
+<tr>
+<td><strong>Vector DB</strong></td>
+<td>Milvus</td>
+<td>&gt;=2.3.0 (pymilvus)</td>
+<td>Complete</td>
+<td>Semantic search &amp; embeddings</td>
+</tr>
+<tr>
+<td><strong>Database Driver</strong></td>
+<td>psycopg</td>
+<td>&gt;=3.1.0</td>
+<td>Complete</td>
+<td>PostgreSQL async driver</td>
+</tr>
+<tr>
+<td><strong>Cache</strong></td>
+<td>Redis</td>
+<td>7+</td>
+<td>Complete</td>
+<td>Session management &amp; caching</td>
+</tr>
+<tr>
+<td><strong>Streaming</strong></td>
+<td>Apache Kafka</td>
+<td>3.5+</td>
+<td>Complete</td>
+<td>Event streaming &amp; messaging</td>
+</tr>
+<tr>
+<td><strong>Storage</strong></td>
+<td>MinIO</td>
+<td>Latest</td>
+<td>Complete</td>
+<td>Object storage for files</td>
+</tr>
+<tr>
+<td><strong>Config</strong></td>
+<td>etcd</td>
+<td>3.5+</td>
+<td>Complete</td>
+<td>Configuration management</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>Prometheus</td>
+<td>2.45+</td>
+<td>Complete</td>
+<td>Metrics collection</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>Grafana</td>
+<td>10+</td>
+<td>Complete</td>
+<td>Dashboards &amp; visualization</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>AlertManager</td>
+<td>0.25+</td>
+<td>Complete</td>
+<td>Alert management</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>NeMo Guardrails</td>
+<td>Latest</td>
+<td>Complete</td>
+<td>Content safety &amp; compliance</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>JWT/PyJWT</td>
+<td>2.8+</td>
+<td>Complete</td>
+<td>Authentication &amp; authorization (key validation enforced)</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>bcrypt</td>
+<td>Latest</td>
+<td>Complete</td>
+<td>Password hashing</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>aiohttp</td>
+<td>&gt;=3.13.3</td>
+<td>Complete</td>
+<td>HTTP client (client-only, C extensions enabled, security: zip bomb DoS fix)</td>
+</tr>
+<tr>
+<td><strong>ML/AI</strong></td>
+<td>XGBoost</td>
+<td>1.6+</td>
+<td>Complete</td>
+<td>Gradient boosting for forecasting</td>
+</tr>
+<tr>
+<td><strong>ML/AI</strong></td>
+<td>scikit-learn</td>
+<td>1.5+</td>
+<td>Complete</td>
+<td>Machine learning models</td>
+</tr>
+<tr>
+<td><strong>ML/AI</strong></td>
+<td>RAPIDS cuML</td>
+<td>Latest</td>
+<td>Complete</td>
+<td>GPU-accelerated ML (optional)</td>
+</tr>
+<tr>
+<td><strong>ML/AI</strong></td>
+<td>Pillow</td>
+<td>10.3+</td>
+<td>Complete</td>
+<td>Image processing (document pipeline)</td>
+</tr>
+<tr>
+<td><strong>ML/AI</strong></td>
+<td>requests</td>
+<td>2.32.4+</td>
+<td>Complete</td>
+<td>HTTP library (patched for security)</td>
+</tr>
+<tr>
+<td><strong>Container</strong></td>
+<td>Docker</td>
+<td>24+</td>
+<td>Complete</td>
+<td>Containerization</td>
+</tr>
+<tr>
+<td><strong>Container</strong></td>
+<td>Docker Compose</td>
+<td>2.20+</td>
+<td>Complete</td>
+<td>Multi-container orchestration</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<p>This architecture represents a <strong>complete, production-ready warehouse operational assistant</strong> that follows NVIDIA AI Blueprint patterns while providing comprehensive functionality for modern warehouse operations with <strong>full MCP integration</strong>, <strong>GPU acceleration</strong>, <strong>demand forecasting</strong>, and <strong>zero-downtime capabilities</strong>.</p>
+</article>
+</div>
+<script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+<button class="md-top md-icon" data-md-component="top" hidden="" type="button">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
+</body>
+</html>

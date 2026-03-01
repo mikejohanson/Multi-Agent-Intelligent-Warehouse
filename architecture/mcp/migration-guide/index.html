@@ -1,0 +1,4232 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="NVIDIA Blueprint–aligned multi-agent assistant for warehouse operations. LangGraph-orchestrated AI agents with MCP framework, hybrid RAG, and GPU-accelerated forecasting.">
+      
+      
+      
+        <link rel="canonical" href="https://mikejohanson.github.io/Multi-Agent-Intelligent-Warehouse/architecture/mcp/migration-guide/">
+      
+      
+        <link rel="prev" href="../deployment-guide/">
+      
+      
+        <link rel="next" href="../rollback-strategy/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
+    
+    
+      
+        <title>Migration Guide - Multi-Agent Intelligent Warehouse</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#mcp-migration-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Multi-Agent Intelligent Warehouse" class="md-header__button md-logo" aria-label="Multi-Agent Intelligent Warehouse" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Multi-Agent Intelligent Warehouse
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migration Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/mikejohanson/Multi-Agent-Intelligent-Warehouse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mikejohanson/Multi-Agent-Intelligent-Warehouse
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/" class="md-tabs__link">
+          
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../system-overview/" class="md-tabs__link">
+          
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../agents/" class="md-tabs__link">
+          
+  
+  Agents
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../forecasting/" class="md-tabs__link">
+          
+  
+  Forecasting
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../retrieval/evidence-scoring/" class="md-tabs__link">
+          
+  
+  Retrieval
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../integrations/" class="md-tabs__link">
+          
+  
+  Integrations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../api/" class="md-tabs__link">
+        
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../security/" class="md-tabs__link">
+          
+  
+  Security
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../configuration/llm-parameters/" class="md-tabs__link">
+          
+  
+  Configuration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../development/" class="md-tabs__link">
+          
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reference/" class="md-tabs__link">
+          
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Multi-Agent Intelligent Warehouse" class="md-nav__button md-logo" aria-label="Multi-Agent Intelligent Warehouse" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Multi-Agent Intelligent Warehouse
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/mikejohanson/Multi-Agent-Intelligent-Warehouse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mikejohanson/Multi-Agent-Intelligent-Warehouse
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prerequisites
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/environment-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deployment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system-overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reasoning-engine/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reasoning Engine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database-migrations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Database Migrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guardrails-implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Guardrails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog-automation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog Automation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    MCP Framework
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            MCP Framework
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MCP Framework
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Implementation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gpu-acceleration-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GPU Acceleration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deployment Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      Table of Contents
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is MCP?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Benefits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Timeline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-mcp-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1: MCP Foundation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: MCP Foundation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components Implemented
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components Implemented">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-mcp-server-srcapiservicesmcpserverpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. MCP Server (src/api/services/mcp/server.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mcp-client-srcapiservicesmcpclientpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. MCP Client (src/api/services/mcp/client.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-base-classes-srcapiservicesmcpbasepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Base Classes (src/api/services/mcp/base.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-erp-adapter-srcapiservicesmcpadapterserp_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. ERP Adapter (src/api/services/mcp/adapters/erp_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Framework
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-agent-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2: Agent Integration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Agent Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-implemented_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components Implemented
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components Implemented">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tool-discovery-service-srcapiservicesmcptool_discoverypy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tool Discovery Service (src/api/services/mcp/tool_discovery.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tool-binding-service-srcapiservicesmcptool_bindingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Tool Binding Service (src/api/services/mcp/tool_binding.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tool-routing-service-srcapiservicesmcptool_routingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Tool Routing Service (src/api/services/mcp/tool_routing.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tool-validation-service-srcapiservicesmcptool_validationpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Tool Validation Service (src/api/services/mcp/tool_validation.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-mcp-enabled-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. MCP-Enabled Agents
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-full-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3: Full Migration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Full Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-implemented_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components Implemented
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components Implemented">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-wms-adapter-srcapiservicesmcpadapterswms_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. WMS Adapter (src/api/services/mcp/adapters/wms_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-iot-adapter-srcapiservicesmcpadaptersiot_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. IoT Adapter (src/api/services/mcp/adapters/iot_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-rfidbarcode-adapter-srcapiservicesmcpadaptersrfid_barcode_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. RFID/Barcode Adapter (src/api/services/mcp/adapters/rfid_barcode_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-time-attendance-adapter-srcapiservicesmcpadapterstime_attendance_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Time Attendance Adapter (src/api/services/mcp/adapters/time_attendance_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-service-discovery-srcapiservicesmcpservice_discoverypy" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Service Discovery (src/api/services/mcp/service_discovery.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-monitoring-system-srcapiservicesmcpmonitoringpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Monitoring System (src/api/services/mcp/monitoring.py)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Checklist
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-Migration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1: Foundation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-agent-integration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2: Agent Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-full-migration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3: Full Migration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Post-Migration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tool-discovery-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tool Discovery Failures
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tool-execution-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Tool Execution Errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-service-registration-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Service Registration Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debugging Tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tool-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tool Design
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-adapter-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Adapter Development
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-service-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Service Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-monitoring-and-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Monitoring and Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rollback-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rollback Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    ADRs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            ADRs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/001-database-migration-system/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR-001: Database Migration System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/002-nvidia-nims-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR-002: NVIDIA NIMs Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/003-hybrid-rag-architecture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR-003: Hybrid RAG Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diagrams/warehouse-operational-assistant/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Diagrams
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Agents
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Agents
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agents/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agents
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agents/equipment-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Equipment & Assets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agents/operations-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agents/safety-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Safety & Compliance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agents/forecasting-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Forecasting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agents/document-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Document Processing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Forecasting
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Forecasting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../forecasting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA RAPIDS Demand Forecasting Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../forecasting/rapids-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RAPIDS Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../forecasting/rapids-implementation-plan/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Plan
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../forecasting/phase1-phase2-complete/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 1 & 2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../forecasting/phase3-4-5-complete/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 3-5
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../forecasting/reorder-recommendation-explainer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reorder Recommendations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Retrieval
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Retrieval
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../retrieval/evidence-scoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evidence Scoring
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../retrieval/sql-path-optimization/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SQL Optimization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../retrieval/caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Integrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../integrations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../integrations/wms-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    WMS Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../integrations/iot-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IoT Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Security
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/secrets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Secrets Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/vulnerability-mitigations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vulnerability Mitigations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/axios-ssrf-protection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Axios SSRF Protection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/langchain-path-traversal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LangChain Path Traversal
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/python-repl-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python REPL Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/nspect-cve-2025-64439-mitigation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CVE-2025-64439 Mitigation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/security-scan-response-aiohttp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scan Response - aiohttp
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/security-scan-response-pyjwt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scan Response - PyJWT
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/security-scan-response-react-server-components/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scan Response - React Server Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../security/vulnerability-research-cve-2025-8709-cve-2025-68664/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vulnerability Research
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/llm-parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LLM Parameters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/dependabot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dependabot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../development/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../development/contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../development/notebook-testing-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Notebook Testing Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../development/repository-health-report/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Repository Health Report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../development/software-inventory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Software Inventory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/phase2-performance-plan/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 2 Performance Plan
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/phase2-implementation-status/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 2 Implementation Status
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      Table of Contents
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-is-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is MCP?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Benefits
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Timeline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-mcp-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1: MCP Foundation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: MCP Foundation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components Implemented
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components Implemented">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-mcp-server-srcapiservicesmcpserverpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. MCP Server (src/api/services/mcp/server.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mcp-client-srcapiservicesmcpclientpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. MCP Client (src/api/services/mcp/client.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-base-classes-srcapiservicesmcpbasepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Base Classes (src/api/services/mcp/base.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-erp-adapter-srcapiservicesmcpadapterserp_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. ERP Adapter (src/api/services/mcp/adapters/erp_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Framework
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-agent-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2: Agent Integration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Agent Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-implemented_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components Implemented
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components Implemented">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tool-discovery-service-srcapiservicesmcptool_discoverypy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tool Discovery Service (src/api/services/mcp/tool_discovery.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tool-binding-service-srcapiservicesmcptool_bindingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Tool Binding Service (src/api/services/mcp/tool_binding.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tool-routing-service-srcapiservicesmcptool_routingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Tool Routing Service (src/api/services/mcp/tool_routing.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tool-validation-service-srcapiservicesmcptool_validationpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Tool Validation Service (src/api/services/mcp/tool_validation.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-mcp-enabled-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. MCP-Enabled Agents
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-full-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3: Full Migration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Full Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#components-implemented_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components Implemented
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components Implemented">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-wms-adapter-srcapiservicesmcpadapterswms_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. WMS Adapter (src/api/services/mcp/adapters/wms_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-iot-adapter-srcapiservicesmcpadaptersiot_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. IoT Adapter (src/api/services/mcp/adapters/iot_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-rfidbarcode-adapter-srcapiservicesmcpadaptersrfid_barcode_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. RFID/Barcode Adapter (src/api/services/mcp/adapters/rfid_barcode_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-time-attendance-adapter-srcapiservicesmcpadapterstime_attendance_adapterpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Time Attendance Adapter (src/api/services/mcp/adapters/time_attendance_adapter.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-service-discovery-srcapiservicesmcpservice_discoverypy" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Service Discovery (src/api/services/mcp/service_discovery.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-monitoring-system-srcapiservicesmcpmonitoringpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Monitoring System (src/api/services/mcp/monitoring.py)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migration Checklist
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-Migration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1: Foundation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-agent-integration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2: Agent Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-full-migration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3: Full Migration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Post-Migration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tool-discovery-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tool Discovery Failures
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tool-execution-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Tool Execution Errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-service-registration-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Service Registration Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debugging Tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tool-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tool Design
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-adapter-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Adapter Development
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-service-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Service Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-monitoring-and-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Monitoring and Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="mcp-migration-guide">MCP Migration Guide<a class="headerlink" href="#mcp-migration-guide" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This guide provides comprehensive instructions for migrating the Warehouse Operational Assistant to the Model Context Protocol (MCP) architecture. The migration is designed to be completed in three phases, with each phase building upon the previous one.</p>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#migration-overview">Migration Overview</a></li>
+<li><a href="#phase-1-mcp-foundation">Phase 1: MCP Foundation</a></li>
+<li><a href="#phase-2-agent-integration">Phase 2: Agent Integration</a></li>
+<li><a href="#phase-3-full-migration">Phase 3: Full Migration</a></li>
+<li><a href="#migration-checklist">Migration Checklist</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+</ol>
+<h2 id="migration-overview">Migration Overview<a class="headerlink" href="#migration-overview" title="Permanent link">&para;</a></h2>
+<h3 id="what-is-mcp">What is MCP?<a class="headerlink" href="#what-is-mcp" title="Permanent link">&para;</a></h3>
+<p>The Model Context Protocol (MCP) is a standardized protocol for tool discovery, execution, and communication between AI agents and external systems. It provides:</p>
+<ul>
+<li><strong>Dynamic Tool Discovery</strong>: Automatic discovery of available tools and capabilities</li>
+<li><strong>Standardized Communication</strong>: Consistent interface for tool execution</li>
+<li><strong>Service Registry</strong>: Centralized management of services and adapters</li>
+<li><strong>Health Monitoring</strong>: Comprehensive monitoring and alerting</li>
+<li><strong>Scalability</strong>: Easy addition of new tools and services</li>
+</ul>
+<h3 id="migration-benefits">Migration Benefits<a class="headerlink" href="#migration-benefits" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Improved Tool Management</strong>: Centralized tool discovery and execution</li>
+<li><strong>Enhanced Scalability</strong>: Easy addition of new adapters and tools</li>
+<li><strong>Better Monitoring</strong>: Comprehensive health monitoring and alerting</li>
+<li><strong>Standardized Interface</strong>: Consistent API across all services</li>
+<li><strong>Reduced Complexity</strong>: Simplified agent-to-tool communication</li>
+</ul>
+<h3 id="migration-timeline">Migration Timeline<a class="headerlink" href="#migration-timeline" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Duration</th>
+<th>Focus</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1</td>
+<td>2-3 weeks</td>
+<td>Foundation &amp; Infrastructure</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>Phase 2</td>
+<td>2-3 weeks</td>
+<td>Agent Integration</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>Phase 3</td>
+<td>3-4 weeks</td>
+<td>Full Migration</td>
+<td>In Progress</td>
+</tr>
+</tbody>
+</table>
+<h2 id="phase-1-mcp-foundation">Phase 1: MCP Foundation<a class="headerlink" href="#phase-1-mcp-foundation" title="Permanent link">&para;</a></h2>
+<h3 id="objectives">Objectives<a class="headerlink" href="#objectives" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Implement core MCP server and client infrastructure</li>
+<li>Create MCP-enabled base classes for adapters and tools</li>
+<li>Migrate ERP adapter as proof of concept</li>
+<li>Establish testing framework</li>
+</ul>
+<h3 id="components-implemented">Components Implemented<a class="headerlink" href="#components-implemented" title="Permanent link">&para;</a></h3>
+<h4 id="1-mcp-server-srcapiservicesmcpserverpy">1. MCP Server (<code>src/api/services/mcp/server.py</code>)<a class="headerlink" href="#1-mcp-server-srcapiservicesmcpserverpy" title="Permanent link">&para;</a></h4>
+<p>The MCP server provides tool registration, discovery, and execution capabilities.</p>
+<p><strong>Key Features:</strong>
+- Tool registration and management
+- Tool discovery and listing
+- Tool execution with parameter validation
+- Resource and prompt management
+- Error handling and logging</p>
+<p><strong>Usage Example:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.api.services.mcp.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCPServer</span><span class="p">,</span> <span class="n">MCPTool</span><span class="p">,</span> <span class="n">MCPToolType</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Create server</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">server</span> <span class="o">=</span> <span class="n">MCPServer</span><span class="p">()</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Register a tool</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">tool</span> <span class="o">=</span> <span class="n">MCPTool</span><span class="p">(</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;get_inventory&quot;</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Get inventory levels&quot;</span><span class="p">,</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">tool_type</span><span class="o">=</span><span class="n">MCPToolType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="s2">&quot;item_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="p">},</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">handler</span><span class="o">=</span><span class="n">inventory_handler</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">)</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">server</span><span class="o">.</span><span class="n">register_tool</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="c1"># Start server</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></code></pre></div></p>
+<h4 id="2-mcp-client-srcapiservicesmcpclientpy">2. MCP Client (<code>src/api/services/mcp/client.py</code>)<a class="headerlink" href="#2-mcp-client-srcapiservicesmcpclientpy" title="Permanent link">&para;</a></h4>
+<p>The MCP client enables communication with MCP servers and tool execution.</p>
+<p><strong>Key Features:</strong>
+- Multi-server communication
+- Tool discovery and execution
+- Resource access and management
+- Prompt management
+- HTTP and WebSocket support</p>
+<p><strong>Usage Example:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.api.services.mcp.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCPClient</span><span class="p">,</span> <span class="n">MCPConnectionType</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Create client</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">client</span> <span class="o">=</span> <span class="n">MCPClient</span><span class="p">()</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Connect to server</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;http://localhost:8000&quot;</span><span class="p">,</span> <span class="n">MCPConnectionType</span><span class="o">.</span><span class="n">HTTP</span><span class="p">)</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># Discover tools</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">tools</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">discover_tools</span><span class="p">()</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1"># Execute tool</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_tool</span><span class="p">(</span><span class="s2">&quot;get_inventory&quot;</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="s2">&quot;item_id&quot;</span><span class="p">:</span> <span class="s2">&quot;ITEM001&quot;</span><span class="p">,</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;WAREHOUSE_A&quot;</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="p">})</span>
+</span></code></pre></div></p>
+<h4 id="3-base-classes-srcapiservicesmcpbasepy">3. Base Classes (<code>src/api/services/mcp/base.py</code>)<a class="headerlink" href="#3-base-classes-srcapiservicesmcpbasepy" title="Permanent link">&para;</a></h4>
+<p>Base classes provide the foundation for MCP adapters and tools.</p>
+<p><strong>Key Components:</strong>
+- <code>MCPAdapter</code>: Base class for all adapters
+- <code>MCPToolBase</code>: Base class for tools
+- <code>MCPManager</code>: System coordination and management
+- Configuration classes and error handling</p>
+<p><strong>Usage Example:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.api.services.mcp.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCPAdapter</span><span class="p">,</span> <span class="n">AdapterConfig</span><span class="p">,</span> <span class="n">AdapterType</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyAdapter</span><span class="p">(</span><span class="n">MCPAdapter</span><span class="p">):</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">AdapterConfig</span><span class="p">):</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_tools</span><span class="p">()</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="c1"># Setup adapter-specific tools</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="k">pass</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="c1"># Implement connection logic</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="k">pass</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="c1"># Implement disconnection logic</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>        <span class="k">pass</span>
+</span></code></pre></div></p>
+<h4 id="4-erp-adapter-srcapiservicesmcpadapterserp_adapterpy">4. ERP Adapter (<code>src/api/services/mcp/adapters/erp_adapter.py</code>)<a class="headerlink" href="#4-erp-adapter-srcapiservicesmcpadapterserp_adapterpy" title="Permanent link">&para;</a></h4>
+<p>The ERP adapter demonstrates MCP integration with enterprise resource planning systems.</p>
+<p><strong>Key Features:</strong>
+- Customer and order management
+- Inventory synchronization
+- Financial reporting
+- Sales analytics
+- Integration with multiple ERP systems</p>
+<h3 id="testing-framework">Testing Framework<a class="headerlink" href="#testing-framework" title="Permanent link">&para;</a></h3>
+<p>Comprehensive testing framework with unit tests, integration tests, and performance tests.</p>
+<p><strong>Test Files:</strong>
+- <code>tests/test_mcp_system.py</code>: Core MCP system tests
+- <code>tests/integration/test_mcp_integration.py</code>: Integration tests
+- <code>tests/performance/test_mcp_performance.py</code>: Performance tests</p>
+<h2 id="phase-2-agent-integration">Phase 2: Agent Integration<a class="headerlink" href="#phase-2-agent-integration" title="Permanent link">&para;</a></h2>
+<h3 id="objectives_1">Objectives<a class="headerlink" href="#objectives_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Implement dynamic tool discovery and registration</li>
+<li>Update all agents to use MCP tools</li>
+<li>Create dynamic tool binding and execution framework</li>
+<li>Add MCP-based routing and tool selection</li>
+<li>Implement validation and error handling</li>
+</ul>
+<h3 id="components-implemented_1">Components Implemented<a class="headerlink" href="#components-implemented_1" title="Permanent link">&para;</a></h3>
+<h4 id="1-tool-discovery-service-srcapiservicesmcptool_discoverypy">1. Tool Discovery Service (<code>src/api/services/mcp/tool_discovery.py</code>)<a class="headerlink" href="#1-tool-discovery-service-srcapiservicesmcptool_discoverypy" title="Permanent link">&para;</a></h4>
+<p>Dynamic tool discovery and registration system.</p>
+<p><strong>Key Features:</strong>
+- Automatic tool discovery from MCP servers and adapters
+- Tool categorization and filtering
+- Usage tracking and performance monitoring
+- Search and discovery capabilities
+- Tool registration and management</p>
+<p><strong>Usage Example:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.api.services.mcp.tool_discovery</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolDiscoveryService</span><span class="p">,</span> <span class="n">ToolCategory</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Create discovery service</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">discovery</span> <span class="o">=</span> <span class="n">ToolDiscoveryService</span><span class="p">()</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Start discovery</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">start_discovery</span><span class="p">()</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Register discovery source</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">register_discovery_source</span><span class="p">(</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="s2">&quot;erp_adapter&quot;</span><span class="p">,</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">erp_adapter</span><span class="p">,</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="s2">&quot;mcp_adapter&quot;</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="p">)</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="c1"># Search for tools</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="n">tools</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">search_tools</span><span class="p">(</span><span class="s2">&quot;inventory&quot;</span><span class="p">)</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1"># Get tools by category</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="n">equipment_tools</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">get_tools_by_category</span><span class="p">(</span><span class="n">ToolCategory</span><span class="o">.</span><span class="n">EQUIPMENT</span><span class="p">)</span>
+</span></code></pre></div></p>
+<h4 id="2-tool-binding-service-srcapiservicesmcptool_bindingpy">2. Tool Binding Service (<code>src/api/services/mcp/tool_binding.py</code>)<a class="headerlink" href="#2-tool-binding-service-srcapiservicesmcptool_bindingpy" title="Permanent link">&para;</a></h4>
+<p>Dynamic tool binding and execution framework.</p>
+<p><strong>Key Features:</strong>
+- Multiple binding strategies (exact, fuzzy, semantic, category, performance-based)
+- Execution modes (sequential, parallel, pipeline, conditional)
+- Tool binding and execution planning
+- Performance monitoring and optimization</p>
+<p><strong>Usage Example:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.api.services.mcp.tool_binding</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolBindingService</span><span class="p">,</span> <span class="n">BindingStrategy</span><span class="p">,</span> <span class="n">ExecutionMode</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Create binding service</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">binding</span> <span class="o">=</span> <span class="n">ToolBindingService</span><span class="p">(</span><span class="n">discovery</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Bind tools to agent</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">bindings</span> <span class="o">=</span> <span class="k">await</span> <span class="n">binding</span><span class="o">.</span><span class="n">bind_tools</span><span class="p">(</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">agent_id</span><span class="o">=</span><span class="s2">&quot;equipment_agent&quot;</span><span class="p">,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">query</span><span class="o">=</span><span class="s2">&quot;Get equipment status&quot;</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;equipment_lookup&quot;</span><span class="p">,</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">entities</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;equipment_id&quot;</span><span class="p">:</span> <span class="s2">&quot;EQ001&quot;</span><span class="p">},</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">context</span><span class="o">=</span><span class="p">{},</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">strategy</span><span class="o">=</span><span class="n">BindingStrategy</span><span class="o">.</span><span class="n">SEMANTIC_MATCH</span><span class="p">,</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    <span class="n">max_tools</span><span class="o">=</span><span class="mi">5</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="p">)</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="c1"># Create execution plan</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="n">plan</span> <span class="o">=</span> <span class="k">await</span> <span class="n">binding</span><span class="o">.</span><span class="n">create_execution_plan</span><span class="p">(</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>    <span class="n">context</span><span class="p">,</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>    <span class="n">bindings</span><span class="p">,</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>    <span class="n">ExecutionMode</span><span class="o">.</span><span class="n">SEQUENTIAL</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="p">)</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="c1"># Execute plan</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">binding</span><span class="o">.</span><span class="n">execute_plan</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
+</span></code></pre></div></p>
+<h4 id="3-tool-routing-service-srcapiservicesmcptool_routingpy">3. Tool Routing Service (<code>src/api/services/mcp/tool_routing.py</code>)<a class="headerlink" href="#3-tool-routing-service-srcapiservicesmcptool_routingpy" title="Permanent link">&para;</a></h4>
+<p>Intelligent tool routing and selection.</p>
+<p><strong>Key Features:</strong>
+- Multiple routing strategies (performance, accuracy, balanced, cost, latency optimized)
+- Query complexity analysis
+- Multi-criteria optimization for tool selection
+- Context-aware tool matching
+- Fallback and redundancy mechanisms</p>
+<p><strong>Usage Example:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.api.services.mcp.tool_routing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolRoutingService</span><span class="p">,</span> <span class="n">RoutingStrategy</span><span class="p">,</span> <span class="n">RoutingContext</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Create routing service</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">routing</span> <span class="o">=</span> <span class="n">ToolRoutingService</span><span class="p">(</span><span class="n">discovery</span><span class="p">,</span> <span class="n">binding</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># Create routing context</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">context</span> <span class="o">=</span> <span class="n">RoutingContext</span><span class="p">(</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">query</span><span class="o">=</span><span class="s2">&quot;Get equipment status for forklift EQ001&quot;</span><span class="p">,</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;equipment_lookup&quot;</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">entities</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;equipment_id&quot;</span><span class="p">:</span> <span class="s2">&quot;EQ001&quot;</span><span class="p">,</span> <span class="s2">&quot;equipment_type&quot;</span><span class="p">:</span> <span class="s2">&quot;forklift&quot;</span><span class="p">},</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">user_context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">},</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">agent_id</span><span class="o">=</span><span class="s2">&quot;equipment_agent&quot;</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="p">)</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="c1"># Route tools</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="n">decision</span> <span class="o">=</span> <span class="k">await</span> <span class="n">routing</span><span class="o">.</span><span class="n">route_tools</span><span class="p">(</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="n">context</span><span class="p">,</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>    <span class="n">strategy</span><span class="o">=</span><span class="n">RoutingStrategy</span><span class="o">.</span><span class="n">BALANCED</span><span class="p">,</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    <span class="n">max_tools</span><span class="o">=</span><span class="mi">5</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="p">)</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="c1"># Get selected tools</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="n">selected_tools</span> <span class="o">=</span> <span class="n">decision</span><span class="o">.</span><span class="n">selected_tools</span>
+</span></code></pre></div></p>
+<h4 id="4-tool-validation-service-srcapiservicesmcptool_validationpy">4. Tool Validation Service (<code>src/api/services/mcp/tool_validation.py</code>)<a class="headerlink" href="#4-tool-validation-service-srcapiservicesmcptool_validationpy" title="Permanent link">&para;</a></h4>
+<p>Comprehensive validation and error handling.</p>
+<p><strong>Key Features:</strong>
+- Input validation for tool parameters
+- Tool capability validation
+- Execution context validation
+- Result validation and verification
+- Error detection, classification, and recovery
+- Retry logic and backoff strategies</p>
+<p><strong>Usage Example:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">src.api.services.mcp.tool_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolValidationService</span><span class="p">,</span> <span class="n">ValidationLevel</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Create validation service</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">validation</span> <span class="o">=</span> <span class="n">ToolValidationService</span><span class="p">(</span><span class="n">discovery</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># Validate tool execution</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">validation</span><span class="o">.</span><span class="n">validate_tool_execution</span><span class="p">(</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">tool_id</span><span class="o">=</span><span class="s2">&quot;get_equipment_status&quot;</span><span class="p">,</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;equipment_id&quot;</span><span class="p">:</span> <span class="s2">&quot;EQ001&quot;</span><span class="p">},</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">context</span><span class="o">=</span><span class="n">execution_context</span><span class="p">,</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">validation_level</span><span class="o">=</span><span class="n">ValidationLevel</span><span class="o">.</span><span class="n">STANDARD</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="p">)</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="c1"># Proceed with execution</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="k">pass</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    <span class="c1"># Handle validation errors</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation error: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div></p>
+<h4 id="5-mcp-enabled-agents">5. MCP-Enabled Agents<a class="headerlink" href="#5-mcp-enabled-agents" title="Permanent link">&para;</a></h4>
+<p>Updated agents with MCP integration:</p>
+<ul>
+<li><strong>Equipment Agent</strong> (<code>src/api/agents/inventory/mcp_equipment_agent.py</code>)</li>
+<li><strong>Operations Agent</strong> (<code>src/api/agents/operations/mcp_operations_agent.py</code>)</li>
+<li><strong>Safety Agent</strong> (<code>src/api/agents/safety/mcp_safety_agent.py</code>)</li>
+</ul>
+<p><strong>Key Features:</strong>
+- Dynamic tool discovery and execution
+- MCP-based tool binding and routing
+- Enhanced tool selection and validation
+- Comprehensive error handling and fallback mechanisms</p>
+<h2 id="phase-3-full-migration">Phase 3: Full Migration<a class="headerlink" href="#phase-3-full-migration" title="Permanent link">&para;</a></h2>
+<h3 id="objectives_2">Objectives<a class="headerlink" href="#objectives_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Migrate all remaining adapters to MCP protocol</li>
+<li>Implement service discovery and registry</li>
+<li>Add monitoring, logging, and management capabilities</li>
+<li>Create comprehensive documentation</li>
+<li>Implement end-to-end testing</li>
+<li>Update deployment configurations</li>
+</ul>
+<h3 id="components-implemented_2">Components Implemented<a class="headerlink" href="#components-implemented_2" title="Permanent link">&para;</a></h3>
+<h4 id="1-wms-adapter-srcapiservicesmcpadapterswms_adapterpy">1. WMS Adapter (<code>src/api/services/mcp/adapters/wms_adapter.py</code>)<a class="headerlink" href="#1-wms-adapter-srcapiservicesmcpadapterswms_adapterpy" title="Permanent link">&para;</a></h4>
+<p>MCP-enabled Warehouse Management System adapter.</p>
+<p><strong>Supported Systems:</strong>
+- SAP EWM (Extended Warehouse Management)
+- Manhattan Associates WMS
+- Oracle WMS
+- HighJump WMS
+- JDA/Blue Yonder WMS</p>
+<p><strong>Key Features:</strong>
+- Inventory management and tracking
+- Order processing and fulfillment
+- Receiving and putaway operations
+- Picking and shipping operations
+- Warehouse configuration and optimization
+- Reporting and analytics</p>
+<h4 id="2-iot-adapter-srcapiservicesmcpadaptersiot_adapterpy">2. IoT Adapter (<code>src/api/services/mcp/adapters/iot_adapter.py</code>)<a class="headerlink" href="#2-iot-adapter-srcapiservicesmcpadaptersiot_adapterpy" title="Permanent link">&para;</a></h4>
+<p>MCP-enabled Internet of Things adapter.</p>
+<p><strong>Supported Platforms:</strong>
+- Azure IoT Hub
+- AWS IoT Core
+- Google Cloud IoT
+- Custom IoT platforms</p>
+<p><strong>Key Features:</strong>
+- Equipment monitoring and telemetry
+- Environmental condition monitoring
+- Safety and security monitoring
+- Asset tracking and location services
+- Predictive maintenance and analytics
+- Real-time alerts and notifications</p>
+<h4 id="3-rfidbarcode-adapter-srcapiservicesmcpadaptersrfid_barcode_adapterpy">3. RFID/Barcode Adapter (<code>src/api/services/mcp/adapters/rfid_barcode_adapter.py</code>)<a class="headerlink" href="#3-rfidbarcode-adapter-srcapiservicesmcpadaptersrfid_barcode_adapterpy" title="Permanent link">&para;</a></h4>
+<p>MCP-enabled RFID and barcode scanning adapter.</p>
+<p><strong>Supported Systems:</strong>
+- RFID readers and tags (UHF, HF, LF)
+- Barcode scanners (1D, 2D, QR codes)
+- Mobile scanning devices
+- Fixed scanning stations</p>
+<p><strong>Key Features:</strong>
+- RFID tag reading and writing
+- Barcode scanning and validation
+- Asset tracking and identification
+- Inventory management and counting
+- Mobile scanning operations
+- Data validation and processing</p>
+<h4 id="4-time-attendance-adapter-srcapiservicesmcpadapterstime_attendance_adapterpy">4. Time Attendance Adapter (<code>src/api/services/mcp/adapters/time_attendance_adapter.py</code>)<a class="headerlink" href="#4-time-attendance-adapter-srcapiservicesmcpadapterstime_attendance_adapterpy" title="Permanent link">&para;</a></h4>
+<p>MCP-enabled time and attendance adapter.</p>
+<p><strong>Supported Systems:</strong>
+- Biometric time clocks
+- RFID/NFC card readers
+- Mobile time tracking applications
+- Web-based time entry systems</p>
+<p><strong>Key Features:</strong>
+- Clock in/out operations
+- Break and meal tracking
+- Overtime calculation
+- Shift management
+- Attendance reporting
+- Integration with HR systems</p>
+<h4 id="5-service-discovery-srcapiservicesmcpservice_discoverypy">5. Service Discovery (<code>src/api/services/mcp/service_discovery.py</code>)<a class="headerlink" href="#5-service-discovery-srcapiservicesmcpservice_discoverypy" title="Permanent link">&para;</a></h4>
+<p>Service discovery and registry system.</p>
+<p><strong>Key Features:</strong>
+- Service registration and deregistration
+- Service discovery and lookup
+- Health monitoring and status tracking
+- Load balancing and failover
+- Service metadata management</p>
+<h4 id="6-monitoring-system-srcapiservicesmcpmonitoringpy">6. Monitoring System (<code>src/api/services/mcp/monitoring.py</code>)<a class="headerlink" href="#6-monitoring-system-srcapiservicesmcpmonitoringpy" title="Permanent link">&para;</a></h4>
+<p>Comprehensive monitoring, logging, and management.</p>
+<p><strong>Key Features:</strong>
+- Metrics collection and analysis
+- Alert management and notification
+- System health monitoring
+- Log management and analysis
+- Performance monitoring</p>
+<h2 id="migration-checklist">Migration Checklist<a class="headerlink" href="#migration-checklist" title="Permanent link">&para;</a></h2>
+<h3 id="pre-migration">Pre-Migration<a class="headerlink" href="#pre-migration" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Backup current system</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Review current architecture</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Identify integration points</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Plan migration timeline</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Set up development environment</li>
+</ul>
+<h3 id="phase-1-foundation">Phase 1: Foundation<a class="headerlink" href="#phase-1-foundation" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement MCP server</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement MCP client</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Create base classes</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Migrate ERP adapter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Create testing framework</li>
+</ul>
+<h3 id="phase-2-agent-integration_1">Phase 2: Agent Integration<a class="headerlink" href="#phase-2-agent-integration_1" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement tool discovery service</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Update Equipment agent</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Update Operations agent</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Update Safety agent</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement tool binding service</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement tool routing service</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement tool validation service</li>
+</ul>
+<h3 id="phase-3-full-migration_1">Phase 3: Full Migration<a class="headerlink" href="#phase-3-full-migration_1" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Migrate WMS adapter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Migrate IoT adapter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Migrate RFID/Barcode adapter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Migrate Time Attendance adapter</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement service discovery</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Implement monitoring system</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Create documentation</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Implement end-to-end testing</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Update deployment configurations</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Create rollback strategy</li>
+</ul>
+<h3 id="post-migration">Post-Migration<a class="headerlink" href="#post-migration" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Performance testing</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Security testing</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> User acceptance testing</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Production deployment</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Monitoring and alerting setup</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Documentation updates</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h3>
+<h4 id="1-tool-discovery-failures">1. Tool Discovery Failures<a class="headerlink" href="#1-tool-discovery-failures" title="Permanent link">&para;</a></h4>
+<p><strong>Problem:</strong> Tools not being discovered automatically.</p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Check discovery service status</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">status</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">get_discovery_status</span><span class="p">()</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Discovery running: </span><span class="si">{</span><span class="n">status</span><span class="p">[</span><span class="s1">&#39;running&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sources: </span><span class="si">{</span><span class="n">status</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># Manually register source</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">register_discovery_source</span><span class="p">(</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="s2">&quot;my_adapter&quot;</span><span class="p">,</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="n">my_adapter</span><span class="p">,</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="s2">&quot;mcp_adapter&quot;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="p">)</span>
+</span></code></pre></div></p>
+<h4 id="2-tool-execution-errors">2. Tool Execution Errors<a class="headerlink" href="#2-tool-execution-errors" title="Permanent link">&para;</a></h4>
+<p><strong>Problem:</strong> Tools failing to execute.</p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Validate tool execution</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">validation_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">validation</span><span class="o">.</span><span class="n">validate_tool_execution</span><span class="p">(</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">tool_id</span><span class="o">=</span><span class="s2">&quot;my_tool&quot;</span><span class="p">,</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;param1&quot;</span><span class="p">:</span> <span class="s2">&quot;value1&quot;</span><span class="p">},</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">context</span><span class="o">=</span><span class="n">execution_context</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">)</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="k">if</span> <span class="ow">not</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation errors: </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div></p>
+<h4 id="3-service-registration-issues">3. Service Registration Issues<a class="headerlink" href="#3-service-registration-issues" title="Permanent link">&para;</a></h4>
+<p><strong>Problem:</strong> Services not registering properly.</p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Check service registry</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">services</span> <span class="o">=</span> <span class="k">await</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_all_services</span><span class="p">()</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registered services: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">services</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="c1"># Check service health</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">services</span><span class="p">:</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="n">health</span> <span class="o">=</span> <span class="k">await</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_service_health</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">service_id</span><span class="p">)</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Service </span><span class="si">{</span><span class="n">service</span><span class="o">.</span><span class="n">service_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">health</span><span class="o">.</span><span class="n">is_healthy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div></p>
+<h3 id="debugging-tips">Debugging Tips<a class="headerlink" href="#debugging-tips" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Enable Debug Logging:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;src.api.services.mcp&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p><strong>Check Service Status:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Get monitoring dashboard</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">dashboard</span> <span class="o">=</span> <span class="k">await</span> <span class="n">monitoring</span><span class="o">.</span><span class="n">get_monitoring_dashboard</span><span class="p">()</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dashboard</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p><strong>Validate Configuration:</strong>
+<div class="highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Check adapter configuration</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">config</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">config</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adapter type: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">adapter_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection string: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">connection_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div></p>
+</li>
+</ol>
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<h3 id="1-tool-design">1. Tool Design<a class="headerlink" href="#1-tool-design" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Single Responsibility</strong>: Each tool should have a single, well-defined purpose</li>
+<li><strong>Parameter Validation</strong>: Always validate input parameters</li>
+<li><strong>Error Handling</strong>: Implement comprehensive error handling</li>
+<li><strong>Documentation</strong>: Provide clear descriptions and examples</li>
+</ul>
+<h3 id="2-adapter-development">2. Adapter Development<a class="headerlink" href="#2-adapter-development" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Configuration Management</strong>: Use configuration classes for settings</li>
+<li><strong>Connection Management</strong>: Implement proper connection lifecycle</li>
+<li><strong>Resource Cleanup</strong>: Always clean up resources on disconnect</li>
+<li><strong>Health Monitoring</strong>: Implement health check endpoints</li>
+</ul>
+<h3 id="3-service-integration">3. Service Integration<a class="headerlink" href="#3-service-integration" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Service Discovery</strong>: Register services with the discovery system</li>
+<li><strong>Health Monitoring</strong>: Implement health check endpoints</li>
+<li><strong>Load Balancing</strong>: Use load balancing for high availability</li>
+<li><strong>Error Recovery</strong>: Implement retry and fallback mechanisms</li>
+</ul>
+<h3 id="4-monitoring-and-logging">4. Monitoring and Logging<a class="headerlink" href="#4-monitoring-and-logging" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Structured Logging</strong>: Use structured logging with consistent format</li>
+<li><strong>Metrics Collection</strong>: Collect relevant performance metrics</li>
+<li><strong>Alert Management</strong>: Set up appropriate alerts and thresholds</li>
+<li><strong>Dashboard Monitoring</strong>: Use monitoring dashboards for system health</li>
+</ul>
+<h3 id="5-testing">5. Testing<a class="headerlink" href="#5-testing" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Unit Tests</strong>: Test individual components in isolation</li>
+<li><strong>Integration Tests</strong>: Test component interactions</li>
+<li><strong>Performance Tests</strong>: Test system performance under load</li>
+<li><strong>End-to-End Tests</strong>: Test complete workflows</li>
+</ul>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>The MCP migration provides a robust, scalable, and maintainable architecture for the Warehouse Operational Assistant. By following this guide and implementing the recommended best practices, you can successfully migrate to the MCP system while maintaining system reliability and performance.</p>
+<p>For additional support or questions, please refer to the MCP system documentation or contact the development team.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>

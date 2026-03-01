@@ -1,0 +1,3396 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="NVIDIA Blueprint–aligned multi-agent assistant for warehouse operations. LangGraph-orchestrated AI agents with MCP framework, hybrid RAG, and GPU-accelerated forecasting.">
+      
+      
+      
+        <link rel="canonical" href="https://mikejohanson.github.io/Multi-Agent-Intelligent-Warehouse/retrieval/evidence-scoring/">
+      
+      
+        <link rel="prev" href="../../forecasting/reorder-recommendation-explainer/">
+      
+      
+        <link rel="next" href="../sql-path-optimization/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
+    
+    
+      
+        <title>Evidence Scoring - Multi-Agent Intelligent Warehouse</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#evidence-scoring-system" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Multi-Agent Intelligent Warehouse" class="md-header__button md-logo" aria-label="Multi-Agent Intelligent Warehouse" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Multi-Agent Intelligent Warehouse
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Evidence Scoring
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="green" data-md-color-accent="light-green"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/mikejohanson/Multi-Agent-Intelligent-Warehouse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mikejohanson/Multi-Agent-Intelligent-Warehouse
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../agents/" class="md-tabs__link">
+          
+  
+  Agents
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../forecasting/" class="md-tabs__link">
+          
+  
+  Forecasting
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  Retrieval
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../integrations/" class="md-tabs__link">
+          
+  
+  Integrations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/" class="md-tabs__link">
+        
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../security/" class="md-tabs__link">
+          
+  
+  Security
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../configuration/llm-parameters/" class="md-tabs__link">
+          
+  
+  Configuration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../development/" class="md-tabs__link">
+          
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Multi-Agent Intelligent Warehouse" class="md-nav__button md-logo" aria-label="Multi-Agent Intelligent Warehouse" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Multi-Agent Intelligent Warehouse
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/mikejohanson/Multi-Agent-Intelligent-Warehouse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mikejohanson/Multi-Agent-Intelligent-Warehouse
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prerequisites
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/environment-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deployment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/system-overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/reasoning-engine/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reasoning Engine
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/database-migrations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Database Migrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/guardrails-implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Guardrails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/changelog-automation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog Automation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    MCP Framework
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            MCP Framework
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MCP Framework
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/api-reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/custom-implementation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Implementation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/gpu-acceleration-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GPU Acceleration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/deployment-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deployment Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/migration-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/mcp/rollback-strategy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rollback Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ADRs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            ADRs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/adr/001-database-migration-system/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR-001: Database Migration System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/adr/002-nvidia-nims-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR-002: NVIDIA NIMs Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/adr/003-hybrid-rag-architecture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ADR-003: Hybrid RAG Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/diagrams/warehouse-operational-assistant/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Diagrams
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Agents
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Agents
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agents/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agents
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agents/equipment-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Equipment & Assets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agents/operations-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agents/safety-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Safety & Compliance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agents/forecasting-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Forecasting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agents/document-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Document Processing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Forecasting
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Forecasting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../forecasting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NVIDIA RAPIDS Demand Forecasting Agent
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../forecasting/rapids-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RAPIDS Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../forecasting/rapids-implementation-plan/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementation Plan
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../forecasting/phase1-phase2-complete/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 1 & 2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../forecasting/phase3-4-5-complete/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 3-5
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../forecasting/reorder-recommendation-explainer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reorder Recommendations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Retrieval
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Retrieval
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Evidence Scoring
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Evidence Scoring
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-factor-evidence-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Factor Evidence Scoring
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confidence-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Confidence Assessment
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Confidence Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thresholds" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thresholds
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-indicators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quality Indicators
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intelligent-clarifying-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Intelligent Clarifying Questions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Intelligent Clarifying Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#question-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Question Generation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Question Types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evidence-scoring-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evidence Scoring Algorithm
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confidence-assessment_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Confidence Assessment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clarifying-questions-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clarifying Questions Engine
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Benefits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Benefits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accuracy-improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Accuracy Improvements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      User Experience
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-reliability" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Reliability
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evidence-scoring-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evidence Scoring Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clarifying-questions-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clarifying Questions Settings
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monitoring &amp; Analytics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring &amp; Analytics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metrics-tracked" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics Tracked
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Monitoring
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#future-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Future Enhancements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Future Enhancements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#planned-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Features
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql-path-optimization/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SQL Optimization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Integrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrations/wms-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    WMS Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrations/iot-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IoT Integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Security
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/secrets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Secrets Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/vulnerability-mitigations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vulnerability Mitigations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/axios-ssrf-protection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Axios SSRF Protection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/langchain-path-traversal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LangChain Path Traversal
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/python-repl-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Python REPL Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/nspect-cve-2025-64439-mitigation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CVE-2025-64439 Mitigation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/security-scan-response-aiohttp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scan Response - aiohttp
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/security-scan-response-pyjwt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scan Response - PyJWT
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/security-scan-response-react-server-components/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scan Response - React Server Components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/vulnerability-research-cve-2025-8709-cve-2025-68664/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vulnerability Research
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/llm-parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LLM Parameters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/dependabot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dependabot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/notebook-testing-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Notebook Testing Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/repository-health-report/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Repository Health Report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/software-inventory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Software Inventory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/phase2-performance-plan/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 2 Performance Plan
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/phase2-implementation-status/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Phase 2 Implementation Status
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-factor-evidence-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Factor Evidence Scoring
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confidence-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Confidence Assessment
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Confidence Assessment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thresholds" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thresholds
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-indicators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quality Indicators
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#intelligent-clarifying-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Intelligent Clarifying Questions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Intelligent Clarifying Questions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#question-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Question Generation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#question-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Question Types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evidence-scoring-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evidence Scoring Algorithm
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confidence-assessment_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Confidence Assessment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clarifying-questions-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clarifying Questions Engine
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Benefits
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Benefits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accuracy-improvements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Accuracy Improvements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      User Experience
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-reliability" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Reliability
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evidence-scoring-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evidence Scoring Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clarifying-questions-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clarifying Questions Settings
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monitoring &amp; Analytics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring &amp; Analytics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metrics-tracked" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics Tracked
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Monitoring
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#future-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Future Enhancements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Future Enhancements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#planned-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Features
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="evidence-scoring-system">Evidence Scoring System<a class="headerlink" href="#evidence-scoring-system" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The Evidence Scoring System provides advanced confidence assessment and quality control for AI responses through multi-factor analysis and intelligent validation.</p>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<h3 id="multi-factor-evidence-scoring">Multi-Factor Evidence Scoring<a class="headerlink" href="#multi-factor-evidence-scoring" title="Permanent link">&para;</a></h3>
+<p>The system evaluates evidence quality using five weighted factors:</p>
+<ol>
+<li><strong>Vector Similarity Scoring (30% weight)</strong></li>
+<li>Measures semantic similarity between query and retrieved content</li>
+<li>Uses cosine similarity with configurable thresholds</li>
+<li>
+<p>Accounts for query complexity and content length</p>
+</li>
+<li>
+<p><strong>Source Authority &amp; Credibility (25% weight)</strong></p>
+</li>
+<li>Evaluates source reliability and expertise</li>
+<li>Considers source type (official docs, user manuals, expert content)</li>
+<li>
+<p>Tracks source reputation and validation history</p>
+</li>
+<li>
+<p><strong>Content Freshness &amp; Recency (20% weight)</strong></p>
+</li>
+<li>Prioritizes recent and up-to-date information</li>
+<li>Uses temporal decay functions for older content</li>
+<li>
+<p>Considers content update frequency and versioning</p>
+</li>
+<li>
+<p><strong>Cross-Reference Validation (15% weight)</strong></p>
+</li>
+<li>Validates information across multiple sources</li>
+<li>Identifies conflicting or contradictory information</li>
+<li>
+<p>Measures consensus and agreement levels</p>
+</li>
+<li>
+<p><strong>Source Diversity Scoring (10% weight)</strong></p>
+</li>
+<li>Ensures varied source coverage</li>
+<li>Prevents bias from single-source dominance</li>
+<li>Promotes comprehensive information gathering</li>
+</ol>
+<h3 id="confidence-assessment">Confidence Assessment<a class="headerlink" href="#confidence-assessment" title="Permanent link">&para;</a></h3>
+<h4 id="thresholds">Thresholds<a class="headerlink" href="#thresholds" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>High Confidence</strong>: Evidence score ≥ 0.7</li>
+<li><strong>Medium Confidence</strong>: 0.4 ≤ Evidence score &lt; 0.7</li>
+<li><strong>Low Confidence</strong>: Evidence score &lt; 0.4</li>
+</ul>
+<h4 id="quality-indicators">Quality Indicators<a class="headerlink" href="#quality-indicators" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Source Count</strong>: Minimum 2 distinct sources required</li>
+<li><strong>Agreement Level</strong>: Cross-source consensus measurement</li>
+<li><strong>Freshness Score</strong>: Content age and update frequency</li>
+<li><strong>Authority Score</strong>: Source credibility and expertise</li>
+</ul>
+<h3 id="intelligent-clarifying-questions">Intelligent Clarifying Questions<a class="headerlink" href="#intelligent-clarifying-questions" title="Permanent link">&para;</a></h3>
+<h4 id="question-generation">Question Generation<a class="headerlink" href="#question-generation" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Context-Aware</strong>: Questions tailored to query type and domain</li>
+<li><strong>Ambiguity Detection</strong>: Identifies specific areas of uncertainty</li>
+<li><strong>Priority Ranking</strong>: Critical, high, medium, low priority questions</li>
+<li><strong>Follow-up Suggestions</strong>: Progressive question refinement</li>
+</ul>
+<h4 id="question-types">Question Types<a class="headerlink" href="#question-types" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Equipment-Specific</strong>: "Which specific equipment are you asking about?"</li>
+<li><strong>Location-Specific</strong>: "Which warehouse zone or area?"</li>
+<li><strong>Time-Specific</strong>: "What time period are you interested in?"</li>
+<li><strong>Scope-Specific</strong>: "Are you asking about current status or historical data?"</li>
+</ul>
+<h2 id="implementation">Implementation<a class="headerlink" href="#implementation" title="Permanent link">&para;</a></h2>
+<h3 id="evidence-scoring-algorithm">Evidence Scoring Algorithm<a class="headerlink" href="#evidence-scoring-algorithm" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_evidence_score</span><span class="p">(</span><span class="n">evidence_pack</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate comprehensive evidence score.&quot;&quot;&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="c1"># Vector similarity (30%)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">vector_score</span> <span class="o">=</span> <span class="n">calculate_vector_similarity</span><span class="p">(</span><span class="n">evidence_pack</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="n">evidence_pack</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="c1"># Source authority (25%)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">authority_score</span> <span class="o">=</span> <span class="n">evaluate_source_authority</span><span class="p">(</span><span class="n">evidence_pack</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="c1"># Content freshness (20%)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">freshness_score</span> <span class="o">=</span> <span class="n">calculate_content_freshness</span><span class="p">(</span><span class="n">evidence_pack</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="c1"># Cross-reference validation (15%)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">validation_score</span> <span class="o">=</span> <span class="n">validate_cross_references</span><span class="p">(</span><span class="n">evidence_pack</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="c1"># Source diversity (10%)</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">diversity_score</span> <span class="o">=</span> <span class="n">calculate_source_diversity</span><span class="p">(</span><span class="n">evidence_pack</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="c1"># Weighted combination</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">evidence_score</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="n">vector_score</span> <span class="o">*</span> <span class="mf">0.30</span> <span class="o">+</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="n">authority_score</span> <span class="o">*</span> <span class="mf">0.25</span> <span class="o">+</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>        <span class="n">freshness_score</span> <span class="o">*</span> <span class="mf">0.20</span> <span class="o">+</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>        <span class="n">validation_score</span> <span class="o">*</span> <span class="mf">0.15</span> <span class="o">+</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>        <span class="n">diversity_score</span> <span class="o">*</span> <span class="mf">0.10</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    <span class="p">)</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    <span class="k">return</span> <span class="n">evidence_score</span>
+</span></code></pre></div>
+<h3 id="confidence-assessment_1">Confidence Assessment<a class="headerlink" href="#confidence-assessment_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">assess_confidence</span><span class="p">(</span><span class="n">evidence_score</span><span class="p">,</span> <span class="n">source_count</span><span class="p">,</span> <span class="n">agreement_level</span><span class="p">):</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Assess overall confidence level.&quot;&quot;&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">if</span> <span class="n">evidence_score</span> <span class="o">&gt;=</span> <span class="mf">0.7</span> <span class="ow">and</span> <span class="n">source_count</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">agreement_level</span> <span class="o">&gt;=</span> <span class="mf">0.8</span><span class="p">:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="k">return</span> <span class="s2">&quot;high&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="k">elif</span> <span class="n">evidence_score</span> <span class="o">&gt;=</span> <span class="mf">0.4</span> <span class="ow">and</span> <span class="n">source_count</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="k">return</span> <span class="s2">&quot;medium&quot;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">return</span> <span class="s2">&quot;low&quot;</span>
+</span></code></pre></div>
+<h3 id="clarifying-questions-engine">Clarifying Questions Engine<a class="headerlink" href="#clarifying-questions-engine" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">generate_clarifying_questions</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">evidence_pack</span><span class="p">,</span> <span class="n">confidence_level</span><span class="p">):</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate context-aware clarifying questions.&quot;&quot;&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="k">if</span> <span class="n">confidence_level</span> <span class="o">==</span> <span class="s2">&quot;low&quot;</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="n">questions</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="c1"># Equipment-specific questions</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="k">if</span> <span class="s2">&quot;equipment&quot;</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">extract_equipment_id</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>            <span class="n">questions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Which specific equipment are you asking about?&quot;</span><span class="p">)</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="c1"># Location-specific questions</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="k">if</span> <span class="s2">&quot;location&quot;</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">extract_location</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>            <span class="n">questions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Which warehouse zone or area?&quot;</span><span class="p">)</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="c1"># Time-specific questions</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="k">if</span> <span class="s2">&quot;status&quot;</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">extract_timeframe</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>            <span class="n">questions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;What time period are you interested in?&quot;</span><span class="p">)</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>        <span class="k">return</span> <span class="n">prioritize_questions</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="k">return</span> <span class="p">[]</span>
+</span></code></pre></div>
+<h2 id="performance-benefits">Performance Benefits<a class="headerlink" href="#performance-benefits" title="Permanent link">&para;</a></h2>
+<h3 id="accuracy-improvements">Accuracy Improvements<a class="headerlink" href="#accuracy-improvements" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Reduced Hallucinations</strong>: Evidence scoring prevents low-quality responses</li>
+<li><strong>Better Source Validation</strong>: Multi-factor analysis ensures reliable information</li>
+<li><strong>Improved Confidence</strong>: Users know when to trust AI responses</li>
+</ul>
+<h3 id="user-experience">User Experience<a class="headerlink" href="#user-experience" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Transparent AI</strong>: Users see confidence levels and evidence quality</li>
+<li><strong>Actionable Feedback</strong>: Clarifying questions help users refine queries</li>
+<li><strong>Quality Indicators</strong>: Visual confidence indicators in UI</li>
+</ul>
+<h3 id="system-reliability">System Reliability<a class="headerlink" href="#system-reliability" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Consistent Quality</strong>: Standardized evidence evaluation across all queries</li>
+<li><strong>Adaptive Learning</strong>: System learns from user feedback and corrections</li>
+<li><strong>Error Prevention</strong>: Proactive quality control prevents poor responses</li>
+</ul>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<h3 id="evidence-scoring-parameters">Evidence Scoring Parameters<a class="headerlink" href="#evidence-scoring-parameters" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">evidence_scoring</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">weights</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">vector_similarity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.30</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">source_authority</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.25</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">content_freshness</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.20</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">cross_reference</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.15</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">source_diversity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.10</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="nt">thresholds</span><span class="p">:</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="nt">high_confidence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="nt">medium_confidence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.4</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="nt">low_confidence</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">  </span><span class="nt">requirements</span><span class="p">:</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="nt">min_sources</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="nt">min_agreement</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">    </span><span class="nt">max_age_days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">365</span>
+</span></code></pre></div>
+<h3 id="clarifying-questions-settings">Clarifying Questions Settings<a class="headerlink" href="#clarifying-questions-settings" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">clarifying_questions</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">max_questions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">priority_order</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;critical&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;high&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;medium&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;low&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">question_types</span><span class="p">:</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nt">equipment_specific</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="nt">location_specific</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="nt">time_specific</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="nt">scope_specific</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
+<h2 id="monitoring-analytics">Monitoring &amp; Analytics<a class="headerlink" href="#monitoring-analytics" title="Permanent link">&para;</a></h2>
+<h3 id="metrics-tracked">Metrics Tracked<a class="headerlink" href="#metrics-tracked" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Evidence Score Distribution</strong>: Average, median, percentile scores</li>
+<li><strong>Confidence Level Distribution</strong>: High/medium/low confidence ratios</li>
+<li><strong>Question Generation Rate</strong>: Frequency of clarifying questions</li>
+<li><strong>User Satisfaction</strong>: Feedback on response quality</li>
+<li><strong>Source Diversity</strong>: Variety of sources used</li>
+</ul>
+<h3 id="performance-monitoring">Performance Monitoring<a class="headerlink" href="#performance-monitoring" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Response Time Impact</strong>: Evidence scoring overhead</li>
+<li><strong>Accuracy Improvements</strong>: Before/after quality metrics</li>
+<li><strong>User Engagement</strong>: Interaction with confidence indicators</li>
+<li><strong>Error Reduction</strong>: Decrease in low-quality responses</li>
+</ul>
+<h2 id="future-enhancements">Future Enhancements<a class="headerlink" href="#future-enhancements" title="Permanent link">&para;</a></h2>
+<h3 id="planned-features">Planned Features<a class="headerlink" href="#planned-features" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Machine Learning Integration</strong>: Learn from user feedback</li>
+<li><strong>Dynamic Weight Adjustment</strong>: Adapt weights based on domain</li>
+<li><strong>Advanced Question Types</strong>: More sophisticated question generation</li>
+<li><strong>Real-time Validation</strong>: Live evidence quality monitoring</li>
+<li><strong>Cross-Domain Learning</strong>: Apply learnings across different domains</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
