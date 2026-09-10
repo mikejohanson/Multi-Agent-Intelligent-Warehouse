@@ -82,7 +82,7 @@ export function validatePathParam(param: string, paramName: string = 'parameter'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000, // Increased to 60 seconds for complex reasoning
+  timeout: 120000, // 120 seconds (doubled) for complex reasoning
   headers: {
     'Content-Type': 'application/json',
   },
@@ -295,7 +295,12 @@ export const mcpAPI = {
   refreshDiscovery: async (): Promise<any> => {
     const response = await api.post('/mcp/discovery/refresh');
     return response.data;
-  }
+  },
+
+  getCapabilities: async (): Promise<any> => {
+    const response = await api.get('/mcp/capabilities');
+    return response.data;
+  },
 };
 
 export const chatAPI = {
@@ -319,11 +324,11 @@ export const chatAPI = {
     const isComplexQuery = complexKeywords.some(keyword => messageLower.includes(keyword)) || 
                           request.message.split(' ').length > 15;
     
-    let timeout = 60000; // Default 60s
+    let timeout = 120000; // Default 120s (doubled)
     if (request.enable_reasoning) {
-      timeout = isComplexQuery ? 240000 : 120000; // 240s (4min) for complex reasoning, 120s for regular reasoning
+      timeout = isComplexQuery ? 480000 : 240000; // 480s (8min) for complex reasoning, 240s for regular reasoning
     } else if (isComplexQuery) {
-      timeout = 120000; // 120s for complex queries without reasoning
+      timeout = 240000; // 240s for complex queries without reasoning
     }
     
     // Log timeout for debugging
@@ -543,6 +548,71 @@ export const healthAPI = {
     // Increased timeout for health check to handle slow backend responses
     // Health check includes database connection, so it may take longer
     const response = await api.get('/health/simple', { timeout: 30000 }); // 30 seconds (increased from 15s)
+    return response.data;
+  },
+
+  getLive: async (): Promise<{ status: string }> => {
+    const response = await api.get('/live', { timeout: 5000 });
+    return response.data;
+  },
+
+  getFull: async (): Promise<any> => {
+    const response = await api.get('/health', { timeout: 15000 });
+    return response.data;
+  },
+};
+
+export interface CircuitStats {
+  state: 'closed' | 'open' | 'half_open' | 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+  failure_count: number;
+  success_count?: number;
+  last_failure_at?: string | null;
+  failure_threshold?: number;
+  total_calls?: number;
+  total_failures?: number;
+  total_successes?: number;
+  trip_count?: number;
+  cooldown_remaining_s?: number;
+}
+
+export interface DomainHealth {
+  equipment: 'HEALTHY' | 'DEGRADED' | 'CIRCUIT OPEN';
+  labor: 'HEALTHY' | 'DEGRADED' | 'CIRCUIT OPEN';
+  wave: 'HEALTHY' | 'DEGRADED' | 'CIRCUIT OPEN';
+  inventory: 'HEALTHY' | 'DEGRADED' | 'CIRCUIT OPEN';
+}
+
+export interface CircuitStates {
+  nim: CircuitStats;
+  domains: Array<{ domain?: string; name?: string } & CircuitStats>;
+}
+
+export interface RuntimeStatus {
+  runtime_initialized: boolean;
+  uptime_seconds?: number;
+  model_gateway_available: boolean;
+  decision_engine_available: boolean;
+  state_provider_available: boolean;
+  inventory_mcp_configured: boolean;
+  equipment_mcp_configured: boolean;
+  labor_mcp_configured: boolean;
+  wave_mcp_configured: boolean;
+  equipment_agent_available: boolean;
+  operations_agent_available: boolean;
+  safety_agent_available: boolean;
+  equipment_executor_available: boolean;
+  labor_executor_available: boolean;
+  wave_executor_available: boolean;
+  // Batch 5 fields: operational health and circuit state
+  maiw_operational_status?: 'HEALTHY' | 'DEGRADED';
+  model_gateway_status?: 'HEALTHY' | 'CIRCUIT OPEN' | 'DEGRADED';
+  domain_health?: DomainHealth;
+  circuit_states?: CircuitStates;
+}
+
+export const runtimeAPI = {
+  getStatus: async (): Promise<RuntimeStatus> => {
+    const response = await api.get('/runtime/status', { timeout: 10000 });
     return response.data;
   },
 };

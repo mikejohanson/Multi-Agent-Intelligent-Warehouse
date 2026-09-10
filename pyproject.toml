@@ -2,6 +2,21 @@
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
+# ── uv workspace ───────────────────────────────────────────────────────────────
+# Phase 8: declares the package workspace so `uv sync` can resolve all members
+# together. The root project remains the API application entry point.
+# Run: uv sync --all-packages
+[tool.uv.workspace]
+members = [
+    "packages/maiw-mcp",
+    "packages/maiw-state",
+    "packages/maiw-decision",
+    "packages/maiw-models",
+    "packages/maiw-skills",
+    "packages/maiw-execution",
+    "packages/maiw-agents",
+]
+
 [project]
 name = "warehouse-operational-assistant"
 version = "1.0.0"
@@ -121,6 +136,7 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra -q --strict-markers --strict-config"
+asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
@@ -139,7 +155,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["chain_server", "inventory_retriever", "memory_retriever", "guardrails"]
+source = ["src"]
 omit = [
     "*/tests/*",
     "*/test_*",

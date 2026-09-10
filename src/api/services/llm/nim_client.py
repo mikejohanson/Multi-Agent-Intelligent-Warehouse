@@ -61,25 +61,73 @@ def _getenv_float(key: str, default: float) -> float:
         return default
 
 
+def _getenv_bool(key: str, default: bool) -> bool:
+    """Safely get boolean from environment variable, stripping comments."""
+    value = os.getenv(key)
+    if value is None:
+        return default
+    value = value.split("#")[0].strip().lower()
+    if value in {"1", "true", "yes", "on"}:
+        return True
+    if value in {"0", "false", "no", "off"}:
+        return False
+    logger.warning(f"Invalid boolean value for {key}: '{value}', using default {default}")
+    return default
+
+
+def _ensure_no_think_system_prompt(
+    messages: List[Dict[str, str]],
+) -> List[Dict[str, str]]:
+    """Prepend /no_think to the first system message for Nemotron fast mode."""
+    updated_messages = [dict(message) for message in messages]
+    for message in updated_messages:
+        if message.get("role") == "system":
+            content = message.get("content") or ""
+            if "/no_think" not in content and "detailed thinking off" not in content.lower():
+                message["content"] = f"/no_think\n{content}".strip()
+            break
+    else:
+        updated_messages.insert(0, {"role": "system", "content": "/no_think"})
+    return updated_messages
+
+
 @dataclass
 class NIMConfig:
     """NVIDIA NIM configuration."""
 
     llm_api_key: str = os.getenv("NVIDIA_API_KEY", "")
-    llm_base_url: str = os.getenv("LLM_NIM_URL", "https://api.brev.dev/v1")
+    llm_base_url: str = os.getenv("LLM_NIM_URL", "https://integrate.api.nvidia.com/v1")
     embedding_api_key: str = os.getenv("EMBEDDING_API_KEY") or os.getenv("NVIDIA_API_KEY", "")
     embedding_base_url: str = os.getenv(
         "EMBEDDING_NIM_URL", "https://integrate.api.nvidia.com/v1"
     )
-    llm_model: str = os.getenv("LLM_MODEL", "nvcf:nvidia/llama-3.3-nemotron-super-49b-v1:dep-36lKV0IHjM2xq0MqnzR8wTnQwON")
-    embedding_model: str = os.getenv("EMBEDDING_MODEL", "nvidia/nv-embedqa-e5-v5")
-    timeout: int = _getenv_int("LLM_CLIENT_TIMEOUT", 120)  # Increased from 60s to 120s to prevent premature timeouts
+    llm_model: str = os.getenv("LLM_MODEL", "nvidia/nemotron-3-super-120b-a12b")
+    embedding_model: str = os.getenv("EMBEDDING_MODEL", "nvidia/llama-nemotron-embed-vl-1b-v2")
+    timeout: int = _getenv_int("LLM_CLIENT_TIMEOUT", 240)  # 240s code default (doubled) to prevent premature timeouts
     # LLM generation parameters (configurable via environment variables)
     default_temperature: float = _getenv_float("LLM_TEMPERATURE", 0.1)
     default_max_tokens: int = _getenv_int("LLM_MAX_TOKENS", 2000)
     default_top_p: float = _getenv_float("LLM_TOP_P", 1.0)
     default_frequency_penalty: float = _getenv_float("LLM_FREQUENCY_PENALTY", 0.0)
     default_presence_penalty: float = _getenv_float("LLM_PRESENCE_PENALTY", 0.0)
+    default_reasoning_budget: int = _getenv_int("LLM_REASONING_BUDGET", 0)
+    default_enable_thinking: bool = _getenv_bool("LLM_ENABLE_THINKING", False)
+
+
+def _extract_message_content(message: Dict[str, Any], allow_reasoning_fallback: bool = False) -> str:
+    """Extract assistant text from NIM chat completion message payloads."""
+    content = message.get("content")
+    if content:
+        return content
+
+    if not allow_reasoning_fallback:
+        return ""
+
+    reasoning_content = message.get("reasoning_content") or message.get("reasoning")
+    if reasoning_content:
+        return reasoning_content
+
+    return ""
 
 
 @dataclass
@@ -171,8 +219,7 @@ class NIMClient:
             )
         
         # Log configuration (without exposing API key)
-        # Note: api.brev.dev is valid for certain models (e.g., 49B), 
-        # while integrate.api.nvidia.com is used for other NIM endpoints
+        # Default: https://integrate.api.nvidia.com/v1 (NVIDIA public cloud)
         logger.info(
             f"NIM Client configured: base_url={self.config.llm_base_url}, "
             f"model={self.config.llm_model}, "
@@ -309,6 +356,9 @@ class NIMClient:
         presence_penalty: Optional[float] = None,
         stream: bool = False,
         max_retries: int = 3,
+        reasoning_budget: Optional[int] = None,
+        enable_thinking: Optional[bool] = None,
+        model_override: Optional[str] = None,
     ) -> LLMResponse:
         """
         Generate response using NVIDIA NIM LLM with retry logic.
@@ -344,9 +394,19 @@ class NIMClient:
             else:
                 self._cache_stats["misses"] += 1
         
+        resolved_enable_thinking = (
+            self.config.default_enable_thinking
+            if enable_thinking is None
+            else enable_thinking
+        )
+        effective_model = model_override or self.config.llm_model
+        request_messages = messages
+        if "nemotron" in effective_model.lower() and not resolved_enable_thinking:
+            request_messages = _ensure_no_think_system_prompt(messages)
+
         payload = {
-            "model": self.config.llm_model,
-            "messages": messages,
+            "model": effective_model,
+            "messages": request_messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
             "stream": stream,
@@ -361,6 +421,17 @@ class NIMClient:
         if not math.isclose(presence_penalty, 0.0, abs_tol=1e-09):
             payload["presence_penalty"] = presence_penalty
 
+        if "nemotron" in effective_model.lower():
+            if resolved_enable_thinking:
+                resolved_reasoning_budget = (
+                    self.config.default_reasoning_budget
+                    if reasoning_budget is None
+                    else reasoning_budget
+                )
+                payload["reasoning_budget"] = resolved_reasoning_budget
+            else:
+                payload["chat_template_kwargs"] = {"enable_thinking": False}
+
         last_exception = None
 
         for attempt in range(max_retries):
@@ -370,9 +441,10 @@ class NIMClient:
                 response.raise_for_status()
 
                 data = response.json()
+                message = data["choices"][0]["message"]
 
                 llm_response = LLMResponse(
-                    content=data["choices"][0]["message"]["content"],
+                    content=_extract_message_content(message),
                     usage=data.get("usage", {}),
                     model=data.get("model", self.config.llm_model),
                     finish_reason=data["choices"][0].get("finish_reason", "stop"),

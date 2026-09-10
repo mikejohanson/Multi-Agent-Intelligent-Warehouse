@@ -1,5 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# DEPRECATED (Phase 9A): NIM was the primary path here and was never migrated to ModelGateway.
+# Use maiw_agents.safety.SafetyComplianceAgent instead.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -327,6 +329,35 @@ class MCPSafetyComplianceAgent:
                     user_query=query,
                 )
             
+            # For incident/event queries with extracted entities, skip slow LLM parsing
+            incident_keywords = [
+                "issue", "problem", "flooding", "fire", "spill", "incident",
+                "report", "event", "over-temp", "overtemp", "temperature", "alarm",
+            ]
+            is_incident_query = any(keyword in query_lower for keyword in incident_keywords)
+            if is_incident_query and entities.get("description"):
+                if not entities.get("reporter"):
+                    entities["reporter"] = "user"
+                if not entities.get("severity"):
+                    entities["severity"] = (
+                        "critical"
+                        if any(
+                            word in query_lower
+                            for word in ["fire", "flooding", "flood", "over-temp", "overtemp"]
+                        )
+                        else "high"
+                    )
+                logger.info(
+                    "Using fast keyword-based parsing for safety incident query: %s",
+                    query[:80],
+                )
+                return MCPSafetyQuery(
+                    intent="incident_reporting",
+                    entities=entities,
+                    context=context or {},
+                    user_query=query,
+                )
+
             # For complex queries, use LLM parsing
             # Use LLM to parse the query with better entity extraction
             parse_prompt = [
